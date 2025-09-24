@@ -1,0 +1,437 @@
+{
+    "recipe_id": "MT001",
+    "recipe_weighing": {
+        "recipe_id": "MT001",
+        "recipe_name": "Standard Rubber Mix A",
+        "MaxTempOfFeed": 160.0,
+        "MaxTimeOvertempDischarge": 5,
+        "MinTimeOvertempDischarge": 2,
+        "TempOvertempDischarg": 180.0,
+        "CBReclaim": 1,
+        "TimeOfCBReclaim": 10,
+        "ModifyTime": "2025-08-07T14:30:00",
+        "UsingStatus": 1,
+        "Remark": "First production test of standard mix.",
+        "UseThreeTMP": 1,
+        "DischargeTMPMax": 150.0,
+        "DischargeTMPMin": 120.0,
+        "DischargeTIMPMax": 3.0,
+        "DischargeTIMPmin": 1.5,
+        "OverEnergy": 12.5,
+        "TotalRubTolerance": 0.5,
+        "RotorTMP": 135.0,
+        "DischargeDoorTMP": 132.0,
+        "MixRoomTMP": 138.0,
+        "RotorTMPMinTol": 130.0,
+        "RotorTMPMaxTol": 140.0,
+        "DischargeDoorTMPMinTol": 128.0,
+        "DischargeDoorTMPMaxTol": 135.0,
+        "MixRoomTMPMinTol": 133.0,
+        "MixRoomTMPMaxTol": 143.0,
+        "IsActivate": 1
+    },
+    "recipe_mix": [
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 1,
+            "mix_condition": "Add rubber base",
+            "mix_time": 60,
+            "mix_temp": 80.0,
+            "mix_power": 50.0,
+            "mix_energy": 120.0,
+            "mix_action": "Load rubber into mixer",
+            "mix_pressure": 1.5,
+            "mix_speed": 30
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 2,
+            "mix_condition": "Start mixing",
+            "mix_time": 90,
+            "mix_temp": 100.0,
+            "mix_power": 55.0,
+            "mix_energy": 150.0,
+            "mix_action": "Initial blending",
+            "mix_pressure": 1.8,
+            "mix_speed": 40
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 3,
+            "mix_condition": "Add carbon black",
+            "mix_time": 45,
+            "mix_temp": 110.0,
+            "mix_power": 58.0,
+            "mix_energy": 160.0,
+            "mix_action": "Dispersion phase 1",
+            "mix_pressure": 2.0,
+            "mix_speed": 42
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 4,
+            "mix_condition": "Add oil",
+            "mix_time": 30,
+            "mix_temp": 115.0,
+            "mix_power": 52.0,
+            "mix_energy": 140.0,
+            "mix_action": "Plasticizing",
+            "mix_pressure": 2.1,
+            "mix_speed": 38
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 5,
+            "mix_condition": "Raise temperature",
+            "mix_time": 60,
+            "mix_temp": 130.0,
+            "mix_power": 60.0,
+            "mix_energy": 170.0,
+            "mix_action": "Continue mixing at high speed",
+            "mix_pressure": 2.3,
+            "mix_speed": 45
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 6,
+            "mix_condition": "Add additional fillers",
+            "mix_time": 45,
+            "mix_temp": 135.0,
+            "mix_power": 63.0,
+            "mix_energy": 180.0,
+            "mix_action": "Filler dispersion",
+            "mix_pressure": 2.2,
+            "mix_speed": 42
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 7,
+            "mix_condition": "Stabilize mix",
+            "mix_time": 30,
+            "mix_temp": 138.0,
+            "mix_power": 61.0,
+            "mix_energy": 175.0,
+            "mix_action": "Homogenizing",
+            "mix_pressure": 2.0,
+            "mix_speed": 40
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 8,
+            "mix_condition": "Add curatives",
+            "mix_time": 20,
+            "mix_temp": 140.0,
+            "mix_power": 58.0,
+            "mix_energy": 160.0,
+            "mix_action": "Final additive mixing",
+            "mix_pressure": 1.9,
+            "mix_speed": 35
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 9,
+            "mix_condition": "Final mix",
+            "mix_time": 90,
+            "mix_temp": 145.0,
+            "mix_power": 65.0,
+            "mix_energy": 190.0,
+            "mix_action": "Final mixing at max speed",
+            "mix_pressure": 2.5,
+            "mix_speed": 50
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 10,
+            "mix_condition": "Cooling phase",
+            "mix_time": 60,
+            "mix_temp": 120.0,
+            "mix_power": 45.0,
+            "mix_energy": 110.0,
+            "mix_action": "Cool with slower mixing",
+            "mix_pressure": 1.5,
+            "mix_speed": 25
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 11,
+            "mix_condition": "Check consistency",
+            "mix_time": 15,
+            "mix_temp": 115.0,
+            "mix_power": 40.0,
+            "mix_energy": 100.0,
+            "mix_action": "Quality inspection",
+            "mix_pressure": 1.2,
+            "mix_speed": 20
+        },
+        {
+            "recipe_id": "MT001",
+            "mix_seq_no": 12,
+            "mix_condition": "Discharge mix",
+            "mix_time": 10,
+            "mix_temp": 110.0,
+            "mix_power": 35.0,
+            "mix_energy": 90.0,
+            "mix_action": "Unload from mixer",
+            "mix_pressure": 1.0,
+            "mix_speed": 10
+        }
+    ],
+    
+    "recipe_weight_CB": [
+        {
+            "recipe_id": "MT001",
+            "CB_index": 1,
+            "CB_materialName": "Carbon Black N330",
+            "CB_materialCode": "CB-N330",
+            "CB_set": 50.0,
+            "CB_tol": 0.5
+        },
+        {
+            "recipe_id": "MT001",
+            "CB_index": 2,
+            "CB_materialName": "Carbon Black N550",
+            "CB_materialCode": "CB-N550",
+            "CB_set": 30.0,
+            "CB_tol": 0.4
+        },
+        {
+            "recipe_id": "MT001",
+            "CB_index": 3,
+            "CB_materialName": "Carbon Black N660",
+            "CB_materialCode": "CB-N660",
+            "CB_set": 20.0,
+            "CB_tol": 0.3
+        },
+        {
+            "recipe_id": "MT001",
+            "CB_index": 4,
+            "CB_materialName": "Carbon Black N220",
+            "CB_materialCode": "CB-N220",
+            "CB_set": 40.0,
+            "CB_tol": 0.6
+        },
+        {
+            "recipe_id": "MT001",
+            "CB_index": 5,
+            "CB_materialName": "Carbon Black N121",
+            "CB_materialCode": "CB-N121",
+            "CB_set": 25.0,
+            "CB_tol": 0.2
+        }
+    ],
+    "recipe_weight_chemical_PD" : [
+
+        {
+            "recipe_id": "MT001",
+            "chemical_PD_index": 1,
+            "chemical_PD_materialName": "Carbon Black N330",
+            "chemical_PD_materialCode": "PD-N330",
+            "chemical_PD_set": 50.0,
+            "chemical_PD_tol": 0.5
+        },
+        {
+            "recipe_id": "MT001",
+            "chemical_PD_index": 2,
+            "chemical_PD_materialName": "chemical_PD N550",
+            "chemical_PD_materialCode": "PD-N550",
+            "chemical_PD_set": 30.0,
+            "chemical_PD_tol": 0.4
+        },
+        {
+            "recipe_id": "MT001",
+            "chemical_PD_index": 3,
+            "chemical_PD_materialName": "chemical_PD N660",
+            "chemical_PD_materialCode": "PD-N660",
+            "chemical_PD_set": 20.0,
+            "chemical_PD_tol": 0.3
+        },
+        {
+            "recipe_id": "MT001",
+            "chemical_PD_index": 4,
+            "chemical_PD_materialName": "chemical_PD N220",
+            "chemical_PD_materialCode": "PD-N220",
+            "chemical_PD_set": 40.0,
+            "chemical_PD_tol": 0.6
+        },
+        {
+            "recipe_id": "MT001",
+            "chemical_PD_index": 5,
+            "chemical_PD_materialName": "chemical_PD N121",
+            "chemical_PD_materialCode": "PD-N121",
+            "chemical_PD_set": 25.0,
+            "chemical_PD_tol": 0.2
+        }
+    ],
+    "recipe_weight_poly" : [
+
+        {
+            "recipe_id": "MT001",
+            "poly_index": 1,
+            "poly_materialName": "poly N330",
+            "poly_materialCode": "poly-N330",
+            "poly_set": 50.0,
+            "poly_tol": 0.5
+        },
+        {
+            "recipe_id": "MT001",
+            "poly_index": 2,
+            "poly_materialName": "poly N550",
+            "poly_materialCode": "poly-N550",
+            "poly_set": 30.0,
+            "poly_tol": 0.4
+        },
+        {
+            "recipe_id": "MT001",
+            "poly_index": 3,
+            "poly_materialName": "poly N660",
+            "poly_materialCode": "poly-N660",
+            "poly_set": 20.0,
+            "poly_tol": 0.3
+        },
+        {
+            "recipe_id": "MT001",
+            "poly_index": 4,
+            "poly_materialName": "poly N220",
+            "poly_materialCode": "poly-N220",
+            "poly_set": 40.0,
+            "poly_tol": 0.6
+        },
+        {
+            "recipe_id": "MT001",
+            "poly_index": 5,
+            "poly_materialName": "poly N121",
+            "poly_materialCode": "poly-N121",
+            "poly_set": 25.0,
+            "poly_tol": 0.2
+        }
+    ],
+    "recipe_weight_oil_a" : [
+
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 1,
+            "oil_a_materialName": "oil_a N330",
+            "oil_a_materialCode": "oil_a-N330",
+            "oil_a_set": 50.0,
+            "oil_a_tol": 0.5
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 2,
+            "oil_a_materialName": "oil_a N550",
+            "oil_a_materialCode": "oil_a-N550",
+            "oil_a_set": 30.0,
+            "oil_a_tol": 0.4
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 3,
+            "oil_a_materialName": "oil_a N660",
+            "oil_a_materialCode": "oil_a-N660",
+            "oil_a_set": 20.0,
+            "oil_a_tol": 0.3
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 4,
+            "oil_a_materialName": "oil_a N220",
+            "oil_a_materialCode": "oil_a-N220",
+            "oil_a_set": 40.0,
+            "oil_a_tol": 0.6
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 5,
+            "oil_a_materialName": "oil_a N121",
+            "oil_a_materialCode": "oil_a-N121",
+            "oil_a_set": 25.0,
+            "oil_a_tol": 0.2
+        }
+    ],
+    "recipe_weight_oil_b" : [
+
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 1,
+            "oil_a_materialName": "oil_a N330",
+            "oil_a_materialCode": "oil_a-N330",
+            "oil_a_set": 50.0,
+            "oil_a_tol": 0.5
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 2,
+            "oil_a_materialName": "oil_a N550",
+            "oil_a_materialCode": "oil_a-N550",
+            "oil_a_set": 30.0,
+            "oil_a_tol": 0.4
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 3,
+            "oil_a_materialName": "oil_a N660",
+            "oil_a_materialCode": "oil_a-N660",
+            "oil_a_set": 20.0,
+            "oil_a_tol": 0.3
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 4,
+            "oil_a_materialName": "oil_a N220",
+            "oil_a_materialCode": "oil_a-N220",
+            "oil_a_set": 40.0,
+            "oil_a_tol": 0.6
+        },
+        {
+            "recipe_id": "MT001",
+            "oil_a_index": 5,
+            "oil_a_materialName": "oil_a N121",
+            "oil_a_materialCode": "oil_a-N121",
+            "oil_a_set": 25.0,
+            "oil_a_tol": 0.2
+        }
+    ],
+    "recipe_weight_filler": [
+    {
+        "recipe_id": "MT001",
+        "filler_index": 1,
+        "filler_materialName": "filler N330",
+        "filler_materialCode": "filler-N330",
+        "filler_set": 50.0,
+        "filler_tol": 0.5
+    },
+    {
+        "recipe_id": "MT001",
+        "filler_index": 2,
+        "filler_materialName": "filler N550",
+        "filler_materialCode": "filler-N550",
+        "filler_set": 30.0,
+        "filler_tol": 0.4
+    },
+    {
+        "recipe_id": "MT001",
+        "filler_index": 3,
+        "filler_materialName": "filler N660",
+        "filler_materialCode": "filler-N660",
+        "filler_set": 20.0,
+        "filler_tol": 0.3
+    },
+    {
+        "recipe_id": "MT001",
+        "filler_index": 4,
+        "filler_materialName": "filler N220",
+        "filler_materialCode": "filler-N220",
+        "filler_set": 40.0,
+        "filler_tol": 0.6
+    },
+    {
+        "recipe_id": "MT001",
+        "filler_index": 5,
+        "filler_materialName": "filler N121",
+        "filler_materialCode": "filler-N121",
+        "filler_set": 25.0,
+        "filler_tol": 0.2
+    }
+]
+
+}

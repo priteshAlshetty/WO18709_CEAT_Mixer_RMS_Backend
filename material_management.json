@@ -1,0 +1,73 @@
+{
+    "CB": [
+        {
+            "material_category": "CB",
+            "material_name": "Carbon Black N330",
+            "material_code": "N330",
+            "material_index":1
+        },
+        {
+            "material_category": "CB",
+            "material_name": "Carbon Black N335",
+            "material_code": "N335",
+            "material_index":2
+        }
+    ],
+    "poly": [
+        {
+            "material_category": "poly",
+            "material_name": "Carbon poly N330",
+            "material_code": "N330",
+            "material_index":1
+        },
+        {
+            "material_category": "poly",
+            "material_name": "Carbon poly N335",
+            "material_code": "N335",
+            "material_index":2
+        }
+    ],
+    "chemical_PD": [
+        {
+            "material_category": "chemical_PD",
+            "material_name": "Carbon chemical_PD N330",
+            "material_code": "N330",
+            "material_index":1
+        },
+        {
+            "material_category": "chemical_PD",
+            "material_name": "Carbon chemical_PD N335",
+            "material_code": "N335",
+            "material_index":2
+        }
+    ],
+    "oil_a": [
+        {
+            "material_category": "oil_a",
+            "material_name": "Carbon oil_a N330",
+            "material_code": "N330",
+            "material_index":1
+        },
+        {
+            "material_category": "oil_a",
+            "material_name": "Carbon oil_a N335",
+            "material_code": "N335",
+            "material_index":2
+        }
+    ],
+    "filler": [
+        {
+            "material_category": "filler",
+            "material_name": "Carbon filler N330",
+            "material_code": "N330",
+            "material_index":1
+        },
+        {
+            "material_category": "filler",
+            "material_name": "Carbon filler N335",
+            "material_code": "N335",
+            "material_index":2
+        }
+    ]
+    
+}
