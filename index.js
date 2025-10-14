@@ -1,12 +1,17 @@
 const express = require('express');
 const cors = require('cors');
-
-const app = express();
-const port = process.env.PORT || 3000;
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/config.swagger.js"); // <-- your swagger config
 const recipeRoutes = require('./routes/recipe.routes.js');
-const myData = require("./recipe_structure.json");
+const materialRoutes = require('./routes/material.routes.js');
 const loggingMiddleware = require('./middleware/middleware.logger.js');
+const myData = require("./recipe_structure.json");
 const logger = require('./config/config.logger.js');
+const recipeFormat = require('./recipe_final.json')
+const app = express();
+
+
+const port = process.env.PORT || 3000;
 
 
 // Enable CORS for all requests
@@ -19,9 +24,12 @@ app.use(loggingMiddleware);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+app.get('/recipeFormat', (req, res) => {
+    res.status(200).json(recipeFormat)
+}); 
 
 app.use('/recipe', recipeRoutes);
+app.use('/material', materialRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
@@ -34,6 +42,9 @@ app.use((err, req, res, next) => {
         message: 'Internal Server Error'
     });
 });
+
+// 👉 Swagger docs route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Create server instance
 const server = app.listen(port, '0.0.0.0', () => {

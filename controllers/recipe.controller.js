@@ -1,4 +1,3 @@
-
 const db = require("../config/config.mysql.js");
 
 
@@ -37,6 +36,7 @@ async function checkRecipeExists(recipe_id) {
         conn.release();
     }
 }
+
 /**
  * Retrieves complete recipe data from multiple database tables by recipe ID
  * 
@@ -69,95 +69,104 @@ async function checkRecipeExists(recipe_id) {
  * }
  */
 async function getRecipeById(recipeId) {
-    let recipeFound;
-    const recipeExists = await checkRecipeExists(recipeId);
-    if (!recipeExists.mixingExists || !recipeExists.weighingExists) {
-        recipeFound = false;
-        return { success: recipeFound, message: `Recipe with ID ${recipeId} does not exist.`, recipe_id: recipeId, recipeExists };
-    }else{
+    const conn = await db.getConnection();
+    try {
+        let recipeFound;
+        const recipeExists = await checkRecipeExists(recipeId);
+        
+        if (!recipeExists.mixingExists || !recipeExists.weighingExists) {
+            recipeFound = false;
+            return { 
+                success: recipeFound, 
+                message: `Recipe with ID ${recipeId} does not exist.`, 
+                recipe_id: recipeId, 
+                recipeExists 
+            };
+        }
+
         recipeFound = true;
-        const [recipe_mixing] = await db.query(
-        `SELECT mix_seq_no, mix_condition, mix_time, mix_temp, mix_power, mix_energy, mix_action, mix_pressure, mix_speed FROM recipe_mixing 
-        WHERE recipe_id = ?`,
-        [recipeId]
-    );
+        const [recipe_mixing] = await conn.query(
+            `SELECT mix_seq_no, mix_condition, mix_time, mix_temp, mix_power, mix_energy, mix_action, mix_pressure, mix_speed 
+            FROM recipe_mixing WHERE recipe_id = ?`,
+            [recipeId]
+        );
 
-    const [recipe_weighing] = await db.query(
-        `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
-        [recipeId]
-    );
-    
-    if (recipe_weighing && 'Id' in recipe_weighing[0]) {
-        delete recipe_weighing[0].Id;
+        const [recipe_weighing] = await conn.query(
+            `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
+            [recipeId]
+        );
+        
+        if (recipe_weighing && 'Id' in recipe_weighing[0]) {
+            delete recipe_weighing[0].Id;
+        }
+
+        const [recipe_weight_CB] = await conn.query(
+            `SELECT CB_index, Act, CB_materialName, CB_materialCode, CB_set, CB_tol 
+            FROM recipe_weight_cb WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        const [recipe_weight_poly] = await conn.query(
+            `SELECT POLY_index, sheet_filter, POLY_materialName, POLY_materialCode, POLY_set, POLY_tol 
+            FROM recipe_weight_poly WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        const [recipe_weight_oil_a] = await conn.query(
+            `SELECT OIL_A_index, Act, OIL_A_materialName, OIL_A_materialCode, OIL_A_set, OIL_A_tol 
+            FROM recipe_weight_oil_a WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        const [recipe_weight_oil_b] = await conn.query(
+            `SELECT OIL_B_index, Act, OIL_B_materialName, OIL_B_materialCode, OIL_B_set, OIL_B_tol 
+            FROM recipe_weight_oil_b WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        const [recipe_weight_PD] = await conn.query(
+            `SELECT PD_index, Act, PD_materialName, PD_materialCode, PD_set, PD_tol 
+            FROM recipe_weight_chemical_pd WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        // const [recipe_weight_silica] = await conn.query(
+        //     `SELECT SI_index, Act, SI_materialName, SI_materialCode, SI_set, SI_tol 
+        //     FROM recipe_weight_silica WHERE recipe_id = ?`,
+        //     [recipeId]
+        // );
+
+        const [recipe_weight_filler] = await conn.query(
+            `SELECT FL_index, Act, FL_materialName, FL_materialCode, FL_set, FL_tol 
+            FROM recipe_weight_filler WHERE recipe_id = ?`,
+            [recipeId]
+        );
+
+        return {
+            success: recipeFound,
+            recipe_id: recipeId,
+            recipe_mixing,
+            recipe_weighing,
+            recipe_weight_CB,
+            recipe_weight_PD,
+            recipe_weight_filler,
+            recipe_weight_poly,
+            recipe_weight_oil_a,
+            recipe_weight_oil_b
+            // recipe_weight_silica,
+        };
+
+    } catch (error) {
+        console.error("Error fetching recipe:", error);
+        return {
+            success: false,
+            message: "Database error occurred while fetching recipe",
+            error: error.message,
+            errLocation: "controller/recipe.controller.js - getRecipeById"
+        };
+    } finally {
+        conn.release(); // Always release the connection
     }
-    
-
-    const [recipe_weight_CB] = await db.query(
-        `SELECT CB_index, Act, CB_materialName, CB_materialCode, CB_set, CB_tol FROM recipe_weight_cb WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const [recipe_weight_poly] = await db.query(
-        `SELECT  POLY_index,Act,  POLY_materialName, POLY_materialCode, POLY_set, POLY_tol FROM recipe_weight_poly WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const [recipe_weight_oil_a] = await db.query(
-        `SELECT OIL_A_index, Act, OIL_A_materialName, OIL_A_materialCode, OIL_A_set, OIL_A_tol FROM recipe_weight_oil_a WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const [recipe_weight_oil_b] = await db.query(
-        `SELECT OIL_B_index, Act, OIL_B_materialName, OIL_B_materialCode, OIL_B_set, OIL_B_tol FROM recipe_weight_oil_b WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const [recipe_weight_PD] = await db.query(
-        `SELECT  PD_index, Act,  PD_materialName, PD_materialCode, PD_set, PD_tol FROM recipe_weight_chemical_pd WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const [recipe_weight_silica] = await db.query(
-        `SELECT  SI_index, Act,  SI_materialName, SI_materialCode, SI_set, SI_tol FROM recipe_weight_silica WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-
-    const [recipe_weight_filler] = await db.query(
-        `SELECT  Act,  FL_materialName, FL_materialCode, FL_set, FL_tol FROM recipe_weight_filler WHERE recipe_id = ?`,
-        [recipeId]
-    );
-
-    const recipe_length = {
-        "recipe_mixing_length": recipe_mixing.length,
-        "recipe_weighing_length": recipe_weighing ? 1 : 0,
-        "recipe_weight_CB_length": recipe_weight_CB.length,
-        "recipe_weight_poly_length": recipe_weight_poly.length,
-        "recipe_weight_oil_a_length": recipe_weight_oil_a.length,
-        "recipe_weight_oil_b_length": recipe_weight_oil_b.length,
-        "recipe_weight_PD_length": recipe_weight_PD.length,
-        "recipe_weight_filler_length": recipe_weight_filler.length
-    }
-
-
-    const recipeData = {  // Changed from recipe
-        // recipe_length: recipe_length,
-        success: recipeFound,
-        recipe_id: recipeId,
-        recipe_mixing: recipe_mixing,
-        recipe_weighing: recipe_weighing,
-        recipe_weight_CB: recipe_weight_CB,
-        recipe_weight_poly: recipe_weight_poly,
-        recipe_weight_oil_a: recipe_weight_oil_a,
-        recipe_weight_oil_b: recipe_weight_oil_b,
-        recipe_weight_PD: recipe_weight_PD,
-        recipe_weight_silica: recipe_weight_silica,
-        recipe_weight_filler: recipe_weight_filler,
-    };
-
-    return recipeData;
-    }
-
 }
 
 /**
@@ -205,7 +214,7 @@ async function deleteRecipeByID(recipeId) {
         });
 
         await conn.commit(); // Move commit before return
-
+        await recipeHistory(recipeId, 'DELETED', {});
         if (totalDeleted > 0) {
             return {
                 success: true,
@@ -272,60 +281,102 @@ async function deleteRecipeByID(recipeId) {
  * }
  */
 async function insertRecipe(recipe_json, newInsert = false) {
+    const recipe_id = recipe_json.recipe_weighing.recipe_id;
     
-    const recipe_id = recipe_json.recipe_id;
-    
-    // Handle recipe_mixing array
-    const recipeMixArray = Array.isArray(recipe_json.recipe_mixing) 
-        ? recipe_json.recipe_mixing 
-        : [];
-
-    // Handle recipe_weighing object
-    const recipeWeighing = recipe_json.recipe_weighing[0] || {};
-    
-
-    // Handle recipe_weight_CB array
-    const recipeWeightCB = Array.isArray(recipe_json.recipe_weight_CB)
-        ? recipe_json.recipe_weight_CB
-        : [];
-
-    // Handle recipe_weight_chemical_PD array
-    const recipeWeightPD = Array.isArray(recipe_json.recipe_weight_PD)
-        ? recipe_json.recipe_weight_PD
-        : [];
-
-    // Handle recipe_weight_poly array
-    const recipeWeightPoly = Array.isArray(recipe_json.recipe_weight_poly)
-        ? recipe_json.recipe_weight_poly
-        : [];
-
-    // Handle recipe_weight_oil_b array
-    const recipeWeightOilB = Array.isArray(recipe_json.recipe_weight_oil_b)
-        ? recipe_json.recipe_weight_oil_b
-        : [];
-
-         // Handle recipe_weight_oil_a array
-    const recipeWeightOilA = Array.isArray(recipe_json.recipe_weight_oil_a)
-        ? recipe_json.recipe_weight_oil_a
-        : [];
-
-         // Handle recipe_weight_silica array
-    const recipeWeightSilica = Array.isArray(recipe_json.recipe_weight_silica)
-        ? recipe_json.recipe_weight_silica
-        : [];
+    // Array/Object initialization with null checks
+    const recipeMixArray = Array.isArray(recipe_json.recipe_mixing) ? recipe_json.recipe_mixing : [];
+    const recipeWeighing = recipe_json.recipe_weighing || {};
+    const recipeWeightCB = Array.isArray(recipe_json.recipe_weight_CB) ? recipe_json.recipe_weight_CB : [];
+    const recipeWeightPD = Array.isArray(recipe_json.recipe_weight_chemical_PD) ? recipe_json.recipe_weight_chemical_PD : [];
+    const recipeWeightPoly = Array.isArray(recipe_json.recipe_weight_poly) ? recipe_json.recipe_weight_poly : [];
+    const recipeWeightOilA = Array.isArray(recipe_json.recipe_weight_oil_a) ? recipe_json.recipe_weight_oil_a : [];
+    const recipeWeightOilB = Array.isArray(recipe_json.recipe_weight_oil_b) ? recipe_json.recipe_weight_oil_b : [];
+    // const recipeWeightSilica = Array.isArray(recipe_json.recipe_weight_silica) ? recipe_json.recipe_weight_silica : [];
+    const recipeWeightFiller = Array.isArray(recipe_json.recipe_weight_filler) ? recipe_json.recipe_weight_filler : [];
 
 
-    // Handle recipe_weight_filler array
-    const recipeWeightFiller = Array.isArray(recipe_json.recipe_weight_filler)
-        ? recipe_json.recipe_weight_filler
-        : [];
+    console.log("inside inser recipe",recipeWeightCB );
 
     const conn = await db.getConnection();
+    const results = {
+        mixing: 0,
+        weighing: 0,
+        cb: 0,
+        pd: 0,
+        poly: 0,
+        oilA: 0,
+        oilB: 0,
+        // silica: 0,
+        filler: 0
+    };
 
+    // CB Query
+const CBQuery = `
+    INSERT INTO recipe_weight_cb (
+        CB_index, Act, recipe_id, 
+        CB_materialName, CB_materialCode, 
+        CB_set, CB_tol
+    ) VALUES ?
+`;
+
+// PD Query
+const PDQuery = `
+    INSERT INTO recipe_weight_chemical_pd (
+        PD_index, Act, recipe_id, 
+        PD_materialName, PD_materialCode, 
+        PD_set, PD_tol
+    ) VALUES ?
+`;
+
+// Poly Query
+const polyQuery = `
+    INSERT INTO recipe_weight_poly (
+        POLY_index,  recipe_id,
+        POLY_materialName, POLY_materialCode,
+        POLY_set, POLY_tol,sheet_filter
+    ) VALUES ?
+`;
+
+// Oil A Query
+const oilAQuery = `
+    INSERT INTO recipe_weight_oil_a (
+        OIL_A_index, Act, recipe_id,
+        OIL_A_materialName, OIL_A_materialCode,
+        OIL_A_set, OIL_A_tol
+    ) VALUES ?
+`;
+
+// Oil B Query
+const oilBQuery = `
+    INSERT INTO recipe_weight_oil_b (
+        OIL_B_index, Act, recipe_id,
+        OIL_B_materialName, OIL_B_materialCode,
+        OIL_B_set, OIL_B_tol
+    ) VALUES ?
+`;
+
+// Silica Query
+// const silicaQuery = `
+//     INSERT INTO recipe_weight_silica (
+//         SI_index, Act, recipe_id,
+//         SI_materialName, SI_materialCode,
+//         SI_set, SI_tol
+//     ) VALUES ?
+// `;
+
+// Filler Query
+const fillerQuery = `
+    INSERT INTO recipe_weight_filler (
+        FL_index, Act, recipe_id,
+        FL_materialName, FL_materialCode,
+        FL_set, FL_tol
+    ) VALUES ?
+`;
 
     try {
         await conn.beginTransaction();
-        // delete existing recipe if not new insert
+        
+        // Delete existing recipe if not new insert
         if (!newInsert) {
             await conn.query("DELETE FROM recipe_mixing WHERE recipe_id = ?", [recipe_id]);
             await conn.query("DELETE FROM recipe_weighing WHERE recipe_id = ?", [recipe_id]);
@@ -334,290 +385,221 @@ async function insertRecipe(recipe_json, newInsert = false) {
             await conn.query("DELETE FROM recipe_weight_poly WHERE recipe_id = ?", [recipe_id]);
             await conn.query("DELETE FROM recipe_weight_oil_a WHERE recipe_id = ?", [recipe_id]);
             await conn.query("DELETE FROM recipe_weight_oil_b WHERE recipe_id = ?", [recipe_id]);
-            await conn.query("DELETE FROM recipe_weight_silica WHERE recipe_id = ?", [recipe_id]);
+            // await conn.query("DELETE FROM recipe_weight_silica WHERE recipe_id = ?", [recipe_id]);
             await conn.query("DELETE FROM recipe_weight_filler WHERE recipe_id = ?", [recipe_id]);
-        }
-        // start insterting recipe
-        
-        // Prepare values for bulk insert
-const recipe_mixing_values = recipeMixArray.map(step => [
-    recipe_id,
-    step.mix_seq_no,
-    step.mix_condition,
-    step.mix_time,
-    step.mix_temp,
-    step.mix_power,
-    step.mix_energy,
-    step.mix_action,
-    step.mix_pressure,
-    step.mix_speed
-]);
-// Create the SQL query
-const mixQuery = `
-    INSERT INTO recipe_mixing
-    (recipe_id, mix_seq_no, mix_condition, mix_time, mix_temp, mix_power, mix_energy, mix_action, mix_pressure, mix_speed)
-    VALUES ?
-`;
+            console.log(`Existing recipe with ID ${recipe_id} deleted for update.`);
+        } 
 
-    const [mixingResult] = await conn.query(mixQuery, [recipe_mixing_values]);
-
-                // Insert into recipe_weighing
-    const weighValues = [
-                    recipe_id, // 1
-                    recipeWeighing.recipe_name, // 2
-                    recipeWeighing.MaxTempOfFeed, // 3
-                    recipeWeighing.MaxTimeOvertempDischarge, // 4
-                    recipeWeighing.MinTimeOvertempDischarge, // 5
-                    recipeWeighing.TempOvertempDischarg, // 6
-                    recipeWeighing.CBReclaim, // 7
-                    recipeWeighing.TimeOfCBReclaim, // 8
-                    recipeWeighing.ModifyTime, // 9
-                    recipeWeighing.UsingStatus, // 10
-                    recipeWeighing.Remark, // 11
-                    recipeWeighing.UseThreeTMP, // 12
-                    recipeWeighing.DischargeTMPMax, // 13
-                    recipeWeighing.DischargeTMPMin, // 14
-                    recipeWeighing.DischargeTIMPMax, // 15
-                    recipeWeighing.DischargeTIMPmin, // 16
-                    recipeWeighing.OverEnergy, // 17
-                    recipeWeighing.TotalRubTolerance, // 18
-                    recipeWeighing.RotorTMP, // 19
-                    recipeWeighing.DischargeDoorTMP, // 20
-                    recipeWeighing.MixRoomTMP, // 21
-                    recipeWeighing.RotorTMPMinTol, // 22
-                    recipeWeighing.RotorTMPMaxTol, // 23
-                    recipeWeighing.DischargeDoorTMPMinTol, // 24
-                    recipeWeighing.DischargeDoorTMPMaxTol, // 25
-                    recipeWeighing.MixRoomTMPMinTol, // 26
-                    recipeWeighing.MixRoomTMPMaxTol, // 27
-                    recipeWeighing.IsActivate, // 28
-                ];
-    const weighQuery = `
-    INSERT INTO recipe_weighing (
-        recipe_id,                 -- 1
-        recipe_name,               -- 2
-        MaxTempOfFeed,              -- 3
-        MaxTimeOvertempDischarge,   -- 4
-        MinTimeOvertempDischarge,   -- 5
-        TempOvertempDischarg,       -- 6
-        CBReclaim,                  -- 7
-        TimeOfCBReclaim,            -- 8
-        ModifyTime,                 -- 9
-        UsingStatus,                -- 10
-        Remark,                     -- 11
-        UseThreeTMP,                -- 12
-        DischargeTMPMax,            -- 13
-        DischargeTMPMin,            -- 14
-        DischargeTIMPMax,           -- 15
-        DischargeTIMPmin,           -- 16
-        OverEnergy,                 -- 17
-        TotalRubTolerance,          -- 18
-        RotorTMP,                   -- 19
-        DischargeDoorTMP,           -- 20
-        MixRoomTMP,                 -- 21
-        RotorTMPMinTol,             -- 22
-        RotorTMPMaxTol,             -- 23
-        DischargeDoorTMPMinTol,     -- 24
-        DischargeDoorTMPMaxTol,     -- 25
-        MixRoomTMPMinTol,           -- 26
-        MixRoomTMPMaxTol,           -- 27
-        IsActivate                  -- 28
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`;
-
-                
-                const [weighResult] = await conn.query(weighQuery, weighValues);
-
-                // Prepare values array for multi-row insert
-                // 1️⃣ recipe_weight_CB
-                const CBvalues = recipeWeightCB.map((item) => [
-                    item.CB_index,
-                    item.Act,
+        // Recipe Mixing Insert
+        if (recipeMixArray.length > 0) {
+            const recipe_mixing_values = recipeMixArray.map(step => [
                 recipe_id,
-                    item.CB_materialName,
-                    item.CB_materialCode,
-                    item.CB_set,
-                    item.CB_tol,
-                ]);
+                step.mix_seq_no,
+                step.mix_condition,
+                step.mix_time,
+                step.mix_temp,
+                step.mix_power,
+                step.mix_energy,
+                step.mix_action,
+                step.mix_pressure,
+                step.mix_speed
+            ]);
 
-                const CBQuery = `INSERT INTO recipe_weight_cb
-            (CB_index, Act, recipe_id, CB_materialName, CB_materialCode, CB_set, CB_tol)
-            VALUES ?;`;
-
-                const [cbResult] = await conn.query(CBQuery, [CBvalues]);
-
-                // 2️⃣ recipe_weight_chemical_PD
-                const PDValues = recipeWeightPD.map(
-                    (item) => [
-                        item.PD_index,
-                        item.Act,
+            const mixQuery = `
+                INSERT INTO recipe_mixing (
                     recipe_id,
-                        item.PD_materialName,
-                        item.PD_materialCode,
-                        item.PD_set,
-                        item.PD_tol,
-                    ]
-                );
+                    mix_seq_no,
+                    mix_condition,
+                    mix_time, 
+                    mix_temp,
+                    mix_power,
+                    mix_energy,
+                    mix_action,
+                    mix_pressure,
+                    mix_speed
+                ) VALUES ?
+            `;
 
-                const PDQuery = `
-        INSERT INTO recipe_weight_chemical_pd
-        (PD_index, Act, recipe_id,  PD_materialName, PD_materialCode, PD_set, PD_tol)
-        VALUES ?;
-    `;
-                const [pdResult] = await conn.query(PDQuery, [PDValues]);
-
-                // 3️⃣ recipe_weight_poly
-                const polyValues = recipeWeightPoly.map((item) => [
-                    item.POLY_index,
-                    item.Act,
-                recipe_id,
-                    item.POLY_materialName,
-                    item.POLY_materialCode,
-                    item.POLY_set,
-                    item.POLY_tol,
-                ]);
-
-                const polyQuery = `
-        INSERT INTO recipe_weight_poly
-        (POLY_index, Act, recipe_id,  POLY_materialName, POLY_materialCode, POLY_set, POLY_tol)
-        VALUES ?;
-    `;
-                const [polyResult] = await conn.query(polyQuery, [polyValues]);
-
-                //  4️⃣recipe_weight_oil_a
-                const oilAValues = recipeWeightOilA.map((item) => [
-                    item.OIL_A_index,
-                    item.Act,
-                recipe_id,
-                    item.OIL_A_materialName,
-                    item.OIL_A_materialCode,
-                    item.OIL_A_set,
-                    item.OIL_A_tol,
-                ]);
-
-                const oilAQuery = `
-        INSERT INTO recipe_weight_oil_a
-        ( OIL_A_index, Act, recipe_id, OIL_A_materialName, OIL_A_materialCode, OIL_A_set, OIL_A_tol)
-        VALUES ?;
-    `;
-
-                const [oilAResult] = await conn.query(oilAQuery, [oilAValues]);
-
-                
-                //  4️⃣recipe_weight_oil_b
-                const oilBValues = recipeWeightOilB.map((item) => [
-                    item.OIL_B_index,
-                    item.Act,
-                recipe_id,
-                    item.OIL_B_materialName,
-                    item.OIL_B_materialCode,
-                    item.OIL_B_set,
-                    item.OIL_B_tol,
-                ]);
-
-                const oilBQuery = `
-        INSERT INTO recipe_weight_oil_b
-        ( OIL_B_index, Act, recipe_id, OIL_B_materialName, OIL_B_materialCode, OIL_B_set, OIL_B_tol)
-        VALUES ?;
-    `;
-
-                const [oilBResult] = await conn.query(oilBQuery, [oilBValues]);
-
-                //  recipe_weight_filler
-                const fillerValues = recipeWeightFiller.map((item) => [
-                    item.FL_index,
-                    item.Act,
-                recipe_id,
-                    item.FL_materialName,
-                    item.FL_materialCode,
-                    item.FL_set,
-                    item.FL_tol,
-                ]);
-
-                const fillerQuery = `
-        INSERT INTO recipe_weight_filler
-        ( FL_index,Act,recipe_id,  FL_materialName,FL_materialCode, FL_set, FL_tol)
-        VALUES ?;
-    `;
-                const [fillerResult] = await conn.query(fillerQuery, [fillerValues]);
-
-
-
-                //recipe_silica
-                const silicaValues = recipeWeightSilica.map((item) => [
-                    item.SI_index,
-                    item.Act,
-                recipe_id,
-                    item.SI_materialName,
-                    item.SI_materialCode,
-                    item.SI_set,
-                    item.SI_tol,
-                ]);
-
-                const silicaQuery = `
-        INSERT INTO recipe_weight_silica
-        ( SI_index, Act, recipe_id, SI_materialName, SI_materialCode, SI_set, SI_tol)
-        VALUES ?;
-    `;
-                const [silicaResult] = await conn.query(silicaQuery, [silicaValues]);   
-                await conn.commit(); // ✅ success
-                return {
-                    success: true,
-                    message: `
-        1. Inserted ${mixingResult.affectedRows} rows into recipe_mixing
-        2. Inserted ${weighResult.affectedRows} rows into recipe_weighing
-        3. Inserted ${cbResult.affectedRows} rows into recipe_weight_cb
-        4. Inserted ${pdResult.affectedRows} rows into recipe_weight_PD
-        5. Inserted ${polyResult.affectedRows} rows into recipe_weight_poly
-        6. Inserted ${oilAResult.affectedRows} rows into recipe_weight_oil_a
-        7. Inserted ${oilBResult.affectedRows} rows into recipe_weight_oil_b
-        8. Inserted ${silicaResult.affectedRows} rows into recipe_silica
-        9. Inserted ${fillerResult.affectedRows} rows into recipe_weight_filler
-    `.trim(),
-                };
+            const [mixingResult] = await conn.query(mixQuery, [recipe_mixing_values]);
+            results.mixing = mixingResult.affectedRows;
         }
-    catch (error) {
+
+        // Recipe Weighing Insert (Always required)
+        if (Object.keys(recipeWeighing).length > 0) {
+            const weighValues = [
+                recipeWeighing.recipe_id,                         // 1
+                recipeWeighing.recipe_name,        // 2
+                recipeWeighing.MaxTempOfFeed,      // 3
+                recipeWeighing.MaxTimeOvertempDischarge,  // 4
+                recipeWeighing.MinTimeOvertempDischarge,  // 5
+                recipeWeighing.TempOvertempDischarg,      // 6
+                recipeWeighing.CBReclaim,          // 7
+                recipeWeighing.TimeOfCBReclaim,    // 8
+                recipeWeighing.ModifyTime,         // 9
+                recipeWeighing.UsingStatus,        // 10
+                recipeWeighing.Remark,             // 11
+                recipeWeighing.UseThreeTMP,        // 12
+                recipeWeighing.DischargeTEMP_Max,    // 13
+                recipeWeighing.DischargeTEMP_Min,    // 14
+                recipeWeighing.DischargeTIME_Max,   // 15
+                recipeWeighing.DischargeTIME_Min,   // 16
+                recipeWeighing.OverEnergy,         // 17
+                recipeWeighing.TotalRubTolerance,  // 18
+                recipeWeighing.RotorTMP,           // 19
+                recipeWeighing.DischargeDoorTMP,   // 20
+                recipeWeighing.MixRoomTMP,         // 21
+                recipeWeighing.RotorTMPMinTol,     // 22
+                recipeWeighing.RotorTMPMaxTol,     // 23
+                recipeWeighing.DischargeDoorTMPMinTol,  // 24
+                recipeWeighing.DischargeDoorTMPMaxTol,  // 25
+                recipeWeighing.MixRoomTMPMinTol,   // 26
+                recipeWeighing.MixRoomTMPMaxTol,   // 27
+                recipeWeighing.IsActivate          // 28
+            ];
+
+            const weighQuery = `
+                INSERT INTO recipe_weighing (
+                    recipe_id,                  -- 1
+                    recipe_name,                -- 2
+                    MaxTempOfFeed,             -- 3
+                    MaxTimeOvertempDischarge,   -- 4
+                    MinTimeOvertempDischarge,   -- 5
+                    TempOvertempDischarg,      -- 6
+                    CBReclaim,                 -- 7
+                    TimeOfCBReclaim,           -- 8
+                    ModifyTime,                -- 9
+                    UsingStatus,               -- 10
+                    Remark,                    -- 11
+                    UseThreeTMP,               -- 12
+                    DischargeTEMP_Max,           -- 13
+                    DischargeTEMP_Min,           -- 14
+                    DischargeTIME_Max,          -- 15
+                    DischargeTIME_Min,          -- 16
+                    OverEnergy,                -- 17
+                    TotalRubTolerance,         -- 18
+                    RotorTMP,                  -- 19
+                    DischargeDoorTMP,          -- 20
+                    MixRoomTMP,                -- 21
+                    RotorTMPMinTol,            -- 22
+                    RotorTMPMaxTol,            -- 23
+                    DischargeDoorTMPMinTol,    -- 24
+                    DischargeDoorTMPMaxTol,    -- 25
+                    MixRoomTMPMinTol,          -- 26
+                    MixRoomTMPMaxTol,          -- 27
+                    IsActivate                 -- 28
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const [weighResult] = await conn.query(weighQuery, weighValues);
+            results.weighing = weighResult.affectedRows;
+        } else {
+            throw new Error("Recipe weighing data is required");
+        }
+
+        
+
+        // CB Values Insert
+        if (recipeWeightCB.length > 0) {
+            const CBvalues = recipeWeightCB.map(item => [
+                item.CB_index, item.Act, recipe_id,
+                item.CB_materialName, item.CB_materialCode,
+                item.CB_set, item.CB_tol
+            ]);
+            const [cbResult] = await conn.query(CBQuery, [CBvalues]);
+            results.cb = cbResult.affectedRows;
+        }
+
+        // PD Values Insert
+        if (recipeWeightPD.length > 0) {
+            const PDValues = recipeWeightPD.map(item => [
+                item.PD_index, item.Act, recipe_id,
+                item.PD_materialName, item.PD_materialCode,
+                item.PD_set, item.PD_tol
+            ]);
+            const [pdResult] = await conn.query(PDQuery, [PDValues]);
+            results.pd = pdResult.affectedRows;
+        }
+
+        // Poly Values Insert
+        if (recipeWeightPoly.length > 0) {
+            const polyValues = recipeWeightPoly.map(item => [
+                item.POLY_index,  recipe_id,
+                item.POLY_materialName, item.POLY_materialCode,
+                item.POLY_set, item.POLY_tol,item.sheet_filter
+            ]);
+            const [polyResult] = await conn.query(polyQuery, [polyValues]);
+            results.poly = polyResult.affectedRows;
+        }
+
+        // Oil A Values Insert
+        if (recipeWeightOilA.length > 0) {
+            const oilAValues = recipeWeightOilA.map(item => [
+                item.OIL_A_index, item.Act, recipe_id,
+                item.OIL_A_materialName, item.OIL_A_materialCode,
+                item.OIL_A_set, item.OIL_A_tol
+            ]);
+            const [oilAResult] = await conn.query(oilAQuery, [oilAValues]);
+            results.oilA = oilAResult.affectedRows;
+        }
+
+        // Oil B Values Insert
+        if (recipeWeightOilB.length > 0) {
+            const oilBValues = recipeWeightOilB.map(item => [
+                item.OIL_B_index, item.Act, recipe_id,
+                item.OIL_B_materialName, item.OIL_B_materialCode,
+                item.OIL_B_set, item.OIL_B_tol
+            ]);
+            const [oilBResult] = await conn.query(oilBQuery, [oilBValues]);
+            results.oilB = oilBResult.affectedRows;
+        }
+
+        // Silica Values Insert
+        // if (recipeWeightSilica.length > 0) {
+        //     const silicaValues = recipeWeightSilica.map(item => [
+        //         item.SI_index, item.Act, recipe_id,
+        //         item.SI_materialName, item.SI_materialCode,
+        //         item.SI_set, item.SI_tol
+        //     ]);
+        //     const [silicaResult] = await conn.query(silicaQuery, [silicaValues]);
+        //     results.silica = silicaResult.affectedRows;
+        // }
+
+        // Filler Values Insert
+        if (recipeWeightFiller.length > 0) {
+            const fillerValues = recipeWeightFiller.map(item => [
+                item.FL_index, item.Act, recipe_id,
+                item.FL_materialName, item.FL_materialCode,
+                item.FL_set, item.FL_tol
+            ]);
+            const [fillerResult] = await conn.query(fillerQuery, [fillerValues]);
+            results.filler = fillerResult.affectedRows;
+        }
+
+        await conn.commit();
+        await recipeHistory(recipe_id, 'insert', recipe_json);
+        return {
+            success: true,
+            affectedRows:results,
+            recipe_id: recipe_id
+        };
+
+    } catch (error) {
+        await conn.rollback();
         console.error("Error updating recipe:", error);
-        await conn.rollback(); // ❌ undo everything
         return {
             success: false,
             message: "Database error occurred while updating recipe",
-            errLocation: "controller/recipe.controller2.js - insertRecipe try/catch block",
-            error: error.message,
+            errLocation: "controller/recipe.controller.js - insertRecipe try/catch block",
+            error: error.message
         };
-    }finally {
-    conn.release(); // ✅ always release
+    } finally {
+        conn.release();
     }
 
 }
 
-/**
- * Retrieves all recipe IDs from the recipe_weighing table
- * 
- * @async
- * @returns {Promise<Object>} Result object containing:
- *   - success {boolean} - True if operation successful
- *   - data {Array<string|number>} - Array of recipe IDs if successful
- *   - message {string} - Error message if unsuccessful
- *   - error {string} - Detailed error information if unsuccessful
- * @throws {Error} If database connection fails
- * 
- * @example
- * try {
- *   const result = await getAllRecipeIDs();
- *   if (result.success) {
- *     console.log('Recipe IDs:', result.data); // ['RECIPE001', 'RECIPE002', ...]
- *   } else {
- *     console.error(result.message);
- *   }
- * } catch (error) {
- *   console.error('Failed to get recipe IDs:', error);
- * }
- */
-async function getAllRecipeIDs() {
-    // ...existing code...
-}
+
 
 /**
  * Retrieves all unique recipe IDs from the recipe_weighing table in the database
@@ -672,6 +654,21 @@ async function getAllRecipeIDs(){
     }
 }
 
+
+async function recipeHistory(recipe_id, action, data){
+    const conn = await db.getConnection();
+    const jsonData = JSON.stringify(data);
+    try {
+        const historyQuery = `INSERT INTO recipe_history (recipe_id, action, data) VALUES (?, ?, ?)`;
+        const [result] = await conn.query(historyQuery, [recipe_id, action, jsonData]);
+        return result;
+    } catch (error) {
+        console.error("Error inserting recipe history:", error);
+        throw error;
+    } finally {
+        conn.release();
+    }
+}
 
 module.exports = {
     insertRecipe,

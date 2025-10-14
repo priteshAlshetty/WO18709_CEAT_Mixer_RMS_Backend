@@ -31,14 +31,22 @@ router.get('/allRecipeIds', async (req,res) => {
 });
 
 router.post('/checkRecipeExists/byId', async (req,res)=>{
+
+        if (!req.body) {
+        return res.status(400).json({ 
+            error: "missing request body", 
+            errLocation: "checkRecipeExists/byId request body check",
+            message: "Request body is required" 
+        });
+    }
     const recipeId = req.body.recipe_id;
 
     try{
         if(recipeId) {
             const recipe = await checkRecipeExists(recipeId);
-            if(recipe && recipe.success) {
-                res.status(200).json({data:recipe});    
-            } else if(recipe && !recipe.success){
+            if(recipe && recipe.mixingExists && recipe.weighingExists) {
+                res.status(200).json({message: 'Recipe exists', data:recipe});    
+            } else if(recipe && (!recipe.mixingExists || !recipe.weighingExists)){
                 res.status(404).json({ 
                     message: 'Recipe not found' , 
                     data : recipe });
@@ -57,11 +65,14 @@ router.post('/checkRecipeExists/byId', async (req,res)=>{
 
 router.post('/viewRecipe/byId', async (req,res)=>{
     const recipeId = req.body.recipe_id;
-
+    
+    
+    // console.log("recipeId received at backend viewRecipe/byId endpoint", recipeId);
     try{
         if(recipeId) {
             const recipe = await getRecipeById(recipeId);
             if(recipe && recipe.success) {
+                // console.log("JSON : ",recipe);
                 res.status(200).json({data:recipe});
             } else if(recipe && !recipe.success){
                 res.status(404).json({ message: 'Recipe not found' , data : recipe });
@@ -76,9 +87,20 @@ router.post('/viewRecipe/byId', async (req,res)=>{
 });
 
 router.post('/editRecipe/byId', async (req,res)=>{
-    const recipe = req.body.data;
+    // console.log("editRecipe/byId endpoint hit");
+    // console.log("req.body", req.body);
+        if (!req.body) {
+        return res.status(400).json({ 
+            error: "missing request body", 
+            errLocation: "editRecipe/byId request body check",
+            message: "Request body is required" 
+        });
+    }
+    // Use nullish coalescing to assign null if req.body.recipe doesn't exist
+    const recipe = req.body?.recipe ?? null;
 
-    //console.log("recipe received at backend editRecipe/byId endpoint", recipe);
+
+    // console.log("recipe received at backend editRecipe/byId endpoint", recipe);
 
     try{
         if(recipe){
@@ -102,8 +124,17 @@ router.post('/editRecipe/byId', async (req,res)=>{
 });
 
 router.post('/addNewRecipe', async(req,res) => {
-const recipe = req.body.data;
-const recipeId = req.body.data.recipe_id;
+
+        if (!req.body) {
+        return res.status(400).json({ 
+            error: "missing request body", 
+            errLocation: "addNewRecipe request body check",
+            message: "Request body is required" 
+        });
+    }
+const recipe = req.body.recipe; 
+console.log("recipe recieved", recipe)
+const recipeId = req.body.recipe.recipe_id;
 //console.log("recipe received at backend addNewRecipe/byId endpoint", recipe);
     try{
         if(recipe && recipeId){
