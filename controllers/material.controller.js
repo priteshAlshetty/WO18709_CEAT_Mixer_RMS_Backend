@@ -87,8 +87,38 @@ async function addMaterial(materialData) {
     }
 }
 
+async function deleteMaterial(materialData) {
+    try {
+        const [result] = await db.query("DELETE FROM `material_manager` WHERE `material_code` = ?", [materialData.material_code]);
+
+        if (result.affectedRows > 0) {
+            return {
+                success: true,
+                message: "Delete successful for : " + materialData.material_code,
+                data: result
+            };
+        } else {
+            return {
+                success: false,
+                message: "No rows deleted",
+                data: result
+            };
+        }
+
+    } catch (error) {
+        return {
+            success: false,
+            errLocation: "deleteMaterial() func call at try-catch block.",
+            error: error.message
+        }
+    } finally {
+        console.log("deleteMaterial() executed for:", materialData.material_code);
+    }
+}
+
 module.exports = {
     getAllMaterials,
-    addMaterial
+    addMaterial,
+    deleteMaterial
 }
 //TODO: Implement add, delete and update functions for materials

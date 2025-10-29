@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();    
 const{
     getAllMaterials,
-    addMaterial         
+    addMaterial,
+    deleteMaterial    
 } = require('../controllers/material.controller.js');
 
 // Route to get all materials
@@ -33,6 +34,28 @@ router.post('/addMaterial', async (req, res) => {
         res.status(500).json({ 
             errLocation :"addMaterial route",
             error: result.error });
+    }
+});
+
+
+router.delete('/deleteMaterial', async (req, res) => {
+    const materialData = req.body.material_data;
+
+    if (!materialData || !materialData.material_code) {
+        return res.status(400).json({
+            errLocation: "deleteMaterial route - validation",
+            error: "missing fields: material data. 'material_code' is required."
+        });
+    }
+    const result = await deleteMaterial(materialData);
+    if (result.success) {
+        res.status(200).json(result);
+    } else {
+        res.status(200).json({
+            message : "No material found with code: " + materialData.material_code,
+            errLocation: "deleteMaterial route",
+            error: result.message
+        });
     }
 });
 
