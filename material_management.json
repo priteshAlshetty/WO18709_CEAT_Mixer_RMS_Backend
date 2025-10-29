@@ -1,73 +1,148 @@
 {
-    "CB": [
-        {
-            "material_category": "CB",
-            "material_name": "Carbon Black N330",
-            "material_code": "N330",
-            "material_index":1
-        },
-        {
-            "material_category": "CB",
-            "material_name": "Carbon Black N335",
-            "material_code": "N335",
-            "material_index":2
-        }
-    ],
-    "poly": [
-        {
-            "material_category": "poly",
-            "material_name": "Carbon poly N330",
-            "material_code": "N330",
-            "material_index":1
-        },
-        {
-            "material_category": "poly",
-            "material_name": "Carbon poly N335",
-            "material_code": "N335",
-            "material_index":2
-        }
-    ],
-    "chemical_PD": [
-        {
-            "material_category": "chemical_PD",
-            "material_name": "Carbon chemical_PD N330",
-            "material_code": "N330",
-            "material_index":1
-        },
-        {
-            "material_category": "chemical_PD",
-            "material_name": "Carbon chemical_PD N335",
-            "material_code": "N335",
-            "material_index":2
-        }
-    ],
-    "oil_a": [
-        {
-            "material_category": "oil_a",
-            "material_name": "Carbon oil_a N330",
-            "material_code": "N330",
-            "material_index":1
-        },
-        {
-            "material_category": "oil_a",
-            "material_name": "Carbon oil_a N335",
-            "material_code": "N335",
-            "material_index":2
-        }
-    ],
-    "filler": [
-        {
-            "material_category": "filler",
-            "material_name": "Carbon filler N330",
-            "material_code": "N330",
-            "material_index":1
-        },
-        {
-            "material_category": "filler",
-            "material_name": "Carbon filler N335",
-            "material_code": "N335",
-            "material_index":2
-        }
-    ]
-    
+    "CB": {
+        "count": 4,
+        "data": [
+            {
+                "material_name": "Carbon Black N330",
+                "material_code": "N330"
+            },
+            {
+                "material_name": "Carbon Black N335",
+                "material_code": "N335"
+            },
+            {
+                "material_name": "Carbon Black N339",
+                "material_code": "N339"
+            },
+            {
+                "material_name": "Carbon Black N550",
+                "material_code": "N550"
+            }
+        ]
+    },
+    "PD": {
+        "count": 6,
+        "data": [
+            {
+                "material_name": "Poly Dispersant 101",
+                "material_code": "PD101"
+            },
+            {
+                "material_name": "Poly Dispersant 102",
+                "material_code": "PD102"
+            },
+            {
+                "material_name": "Poly Dispersant 103",
+                "material_code": "PD103"
+            },
+            {
+                "material_name": "Poly Dispersant 104",
+                "material_code": "PD104"
+            },
+            {
+                "material_name": "Poly Dispersant 105",
+                "material_code": "PD105"
+            },
+            {
+                "material_name": "Poly Dispersant 106",
+                "material_code": "PD106"
+            }
+        ]
+    },
+    "FL": {
+        "count": 5,
+        "data": [
+            {
+                "material_name": "Filler Type A",
+                "material_code": "FL-A"
+            },
+            {
+                "material_name": "Filler Type B",
+                "material_code": "FL-B"
+            },
+            {
+                "material_name": "Filler Type C",
+                "material_code": "FL-C"
+            },
+            {
+                "material_name": "Filler Type D",
+                "material_code": "FL-D"
+            },
+            {
+                "material_name": "Filler Type E",
+                "material_code": "FL-E"
+            }
+        ]
+    },
+    "POLY": {
+        "count": 3,
+        "data": [
+            {
+                "material_name": "Polymer X1",
+                "material_code": "PX1"
+            },
+            {
+                "material_name": "Polymer X2",
+                "material_code": "PX2"
+            },
+            {
+                "material_name": "Polymer X3",
+                "material_code": "PX3"
+            }
+        ]
+    },
+    "OIL_A": {
+        "count": 4,
+        "data": [
+            {
+                "material_name": "Oil Additive A1",
+                "material_code": "OA1"
+            },
+            {
+                "material_name": "Oil Additive A2",
+                "material_code": "OA2"
+            },
+            {
+                "material_name": "Oil Additive A3",
+                "material_code": "OA3"
+            },
+            {
+                "material_name": "Oil Additive A4",
+                "material_code": "OA4"
+            }
+        ]
+    },
+    "OIL_B": {
+        "count": 7,
+        "data": [
+            {
+                "material_name": "Oil Base B1",
+                "material_code": "OB1"
+            },
+            {
+                "material_name": "Oil Base B2",
+                "material_code": "OB2"
+            },
+            {
+                "material_name": "Oil Base B3",
+                "material_code": "OB3"
+            },
+            {
+                "material_name": "Oil Base B4",
+                "material_code": "OB4"
+            },
+            {
+                "material_name": "Oil Base B5",
+                "material_code": "OB5"
+            },
+            {
+                "material_name": "Oil Base B6",
+                "material_code": "OB6"
+            },
+            {
+                "material_name": "Oil Base B7",
+                "material_code": "OB7"
+            }
+        ]
+    }
 }

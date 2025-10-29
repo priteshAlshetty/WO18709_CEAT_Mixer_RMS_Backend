@@ -295,7 +295,7 @@ async function insertRecipe(recipe_json, newInsert = false) {
     const recipeWeightFiller = Array.isArray(recipe_json.recipe_weight_filler) ? recipe_json.recipe_weight_filler : [];
 
 
-    console.log("inside inser recipe",recipeWeightCB );
+    // console.log("inside inser recipe",recipeWeightCB );
 
     const conn = await db.getConnection();
     const results = {
