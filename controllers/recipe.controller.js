@@ -85,13 +85,14 @@ async function getRecipeById(recipeId) {
         }
 
         recipeFound = true;
-        const [recipe_mixing] = await conn.query(
+
+        let [recipe_mixing] = await conn.query(
             `SELECT mix_seq_no, mix_condition, mix_time, mix_temp, mix_power, mix_energy, mix_action, mix_pressure, mix_speed 
             FROM recipe_mixing WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        const [recipe_weighing] = await conn.query(
+        let [recipe_weighing] = await conn.query(
             `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
             [recipeId]
         );
@@ -100,31 +101,31 @@ async function getRecipeById(recipeId) {
             delete recipe_weighing[0].Id;
         }
 
-        const [recipe_weight_CB] = await conn.query(
+        let [recipe_weight_CB] = await conn.query(
             `SELECT CB_index, Act, CB_materialName, CB_materialCode, CB_set, CB_tol 
             FROM recipe_weight_cb WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        const [recipe_weight_poly] = await conn.query(
+        let [recipe_weight_poly] = await conn.query(
             `SELECT POLY_index, sheet_filter, POLY_materialName, POLY_materialCode, POLY_set, POLY_tol 
             FROM recipe_weight_poly WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        const [recipe_weight_oil_a] = await conn.query(
+        let [recipe_weight_oil_a] = await conn.query(
             `SELECT OIL_A_index, Act, OIL_A_materialName, OIL_A_materialCode, OIL_A_set, OIL_A_tol 
             FROM recipe_weight_oil_a WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        const [recipe_weight_oil_b] = await conn.query(
+        let [recipe_weight_oil_b] = await conn.query(
             `SELECT OIL_B_index, Act, OIL_B_materialName, OIL_B_materialCode, OIL_B_set, OIL_B_tol 
             FROM recipe_weight_oil_b WHERE recipe_id = ?`,
             [recipeId]
         );
         
-        const [recipe_weight_PD] = await conn.query(
+        let [recipe_weight_PD] = await conn.query(
             `SELECT PD_index, Act, PD_materialName, PD_materialCode, PD_set, PD_tol 
             FROM recipe_weight_chemical_pd WHERE recipe_id = ?`,
             [recipeId]
@@ -132,7 +133,7 @@ async function getRecipeById(recipeId) {
 
 
 
-        const [recipe_weight_filler] = await conn.query(
+        let [recipe_weight_filler] = await conn.query(
             `SELECT FL_index, Act, FL_materialName, FL_materialCode, FL_set, FL_tol 
             FROM recipe_weight_filler WHERE recipe_id = ?`,
             [recipeId]
