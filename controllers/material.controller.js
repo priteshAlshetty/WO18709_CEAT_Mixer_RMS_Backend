@@ -3,17 +3,17 @@ const db = require("../mysql.conn.js");
 async function getAllMaterials() {
 
     try {
-        const [cb] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='CB'   ORDER BY `material_name` ASC");
+        const [cb] = await db.query("SELECT `material_code`, `material_name`  ,`BinID` FROM `material_manager` WHERE `material_type`='CB'   ORDER BY `material_name` ASC");
 
-        const [pd] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='PD'   ORDER BY `material_name` ASC");
+        const [pd] = await db.query("SELECT `material_code`, `material_name`  ,`BinID` FROM `material_manager` WHERE `material_type`='PD'   ORDER BY `material_name` ASC");
 
         const [Poly] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='Poly'   ORDER BY `material_name` ASC");
 
-        const [fl] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='FL'   ORDER BY `material_name` ASC");
+        const [fl] = await db.query("SELECT `material_code`, `material_name` ,`BinID` FROM `material_manager` WHERE `material_type`='FL'   ORDER BY `material_name` ASC");
 
-        const [Oil1] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='Oil1'   ORDER BY `material_name` ASC");
+        const [Oil1] = await db.query("SELECT `material_code`, `material_name` ,`BinID` FROM `material_manager` WHERE `material_type`='Oil1'   ORDER BY `material_name` ASC");
 
-        const [Oil2] = await db.query("SELECT `material_code`, `material_name`  FROM `material_manager` WHERE `material_type`='Oil2'   ORDER BY `material_name` ASC");
+        const [Oil2] = await db.query("SELECT `material_code`, `material_name` ,`BinID` FROM `material_manager` WHERE `material_type`='Oil2'   ORDER BY `material_name` ASC");
 
         const result = {
             CB: {
