@@ -727,7 +727,7 @@ async function getAllRecipeIDs() {
         const recipeIDs = rows.map(row => row.recipe_id);
         return {
             success: true,
-            data: recipeIDs
+            recipe_ids: recipeIDs
         };
     } catch (error) {
         console.error("Error fetching recipe IDs:", error);
@@ -735,6 +735,7 @@ async function getAllRecipeIDs() {
             success: false,
             message: "Database error occurred while fetching recipe IDs",
             error: error.message,
+            recipe_ids: []  
         };
     } finally {
         conn.release(); // ✅ always release        
