@@ -1,5 +1,5 @@
 const db = require("../config/config.mysql.js");
-
+const getMySQLTimestamp = require("../utils/timestamp.helper.js").getMySQLTimestamp;
 
 /**
  * Checks if a recipe exists in both mixing and weighing tables of the database
@@ -96,6 +96,14 @@ async function getRecipeById(recipeId) {
             `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
             [recipeId]
         );
+// convert timestamps to string to avoid issues in frontend
+
+        let timestampFields = recipe_weighing[0]['ModifyTime'];
+       
+        if (timestampFields){
+            console.log("inside timestamp conversion", timestampFields);
+            recipe_weighing[0]['ModifyTime'] =  new Date(timestampFields).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+        }
 
         if (recipe_weighing && 'Id' in recipe_weighing[0]) {
             delete recipe_weighing[0].Id;
@@ -510,7 +518,7 @@ async function insertRecipe(recipe_json, newInsert = false) {
             const [mixingResult] = await conn.query(mixQuery, [recipe_mixing_values]);
             results.mixing = mixingResult.affectedRows;
         }
-
+        let ModifyTime = getMySQLTimestamp();
         // Recipe Weighing Insert (Always required)
         if (Object.keys(recipeWeighing).length > 0) {
             const weighValues = [
@@ -522,7 +530,7 @@ async function insertRecipe(recipe_json, newInsert = false) {
                 recipeWeighing.TempOvertempDischarg,      // 6
                 recipeWeighing.CBReclaim,          // 7
                 recipeWeighing.TimeOfCBReclaim,    // 8
-                recipeWeighing.ModifyTime,         // 9
+                ModifyTime,         // 9
                 recipeWeighing.UsingStatus,        // 10
                 recipeWeighing.Remark,             // 11
                 recipeWeighing.UseThreeTMP,        // 12
