@@ -200,7 +200,7 @@ async function getRecipeById(recipeId) {
 
         if (!Array.isArray(recipe_weight_oil_a) || recipe_weight_oil_a.length === 0) {
             recipe_weight_oil_a = [{ 
-                "OIL_A_index": "",
+                "OIL_A_index": "1",
                 "Act": "",
                 "OIL_A_materialName": "",
                 "OIL_A_materialCode": "",
@@ -211,7 +211,7 @@ async function getRecipeById(recipeId) {
 
         if (!Array.isArray(recipe_weight_oil_b) || recipe_weight_oil_b.length === 0) {
             recipe_weight_oil_b = [{ 
-                "OIL_B_index": "",
+                "OIL_B_index": "1",
                 "Act": "",
                 "OIL_B_materialName": "",
                 "OIL_B_materialCode": "",
