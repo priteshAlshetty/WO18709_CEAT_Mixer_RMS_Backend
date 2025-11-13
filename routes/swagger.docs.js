@@ -165,7 +165,7 @@
 
 /**
  * @swagger
- * /weighing/getExcelReport:
+ * /report/weighing/getExcelReport:
  *   post:
  *     summary: Generate weighing Excel report
  *     tags: [Weighing]
@@ -178,7 +178,7 @@
 
 /**
  * @swagger
- * /batch/getBatchName/bydate:
+ * /report/batch/getBatchName/bydate:
  *   post:
  *     summary: Get batch names by date
  *     tags: [Batch]
@@ -192,7 +192,7 @@
 
 /**
  * @swagger
- * /batch/getSerial/byBatchName:
+ * /report/batch/getSerial/byBatchName:
  *   post:
  *     summary: Get serial numbers by batch name
  *     tags: [Batch]
@@ -205,7 +205,7 @@
 
 /**
  * @swagger
- * /batch/getbatchNo/bySerialNo:
+ * /report/batch/getbatchNo/bySerialNo:
  *   post:
  *     summary: Get batch numbers by serial number
  *     tags: [Batch]
@@ -218,7 +218,7 @@
 
 /**
  * @swagger
- * /batch/getExcelReport:
+ * /report/batch/getExcelReport:
  *   post:
  *     summary: Generate batch Excel report
  *     tags: [Batch]
@@ -231,7 +231,7 @@
 
 /**
  * @swagger
- * /summary/getBatchName/byDate:
+ * /report/summary/getBatchName/byDate:
  *   post:
  *     summary: Get summary batch names by date
  *     tags: [Summary]
@@ -244,7 +244,7 @@
 
 /**
  * @swagger
- * /summary/getSerial/byBatchName:
+ * /report/summary/getSerial/byBatchName:
  *   post:
  *     summary: Get summary serial numbers by batch name
  *     tags: [Summary]
@@ -257,7 +257,7 @@
 
 /**
  * @swagger
- * /summary/getExcelReport:
+ * /report/summary/getExcelReport:
  *   post:
  *     summary: Generate summary Excel report
  *     tags: [Summary]
