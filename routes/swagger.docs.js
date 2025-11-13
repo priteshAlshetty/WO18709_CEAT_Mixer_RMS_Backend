@@ -163,3 +163,106 @@
  *         description: Server error
  */
 
+/**
+ * @swagger
+ * /weighing/getExcelReport:
+ *   post:
+ *     summary: Generate weighing Excel report
+ *     tags: [Weighing]
+ *     description: APIs for Report generation
+ *     responses:
+ *       200:
+ *         description: Weighing Excel Report generated successfully
+ */
+
+
+/**
+ * @swagger
+ * /batch/getBatchName/bydate:
+ *   post:
+ *     summary: Get batch names by date
+ *     tags: [Batch]
+ *     description: APIs for Report generation
+ *     responses:
+ *       200:
+ *         description: List of batch names
+ */
+
+
+
+/**
+ * @swagger
+ * /batch/getSerial/byBatchName:
+ *   post:
+ *     summary: Get serial numbers by batch name
+ *     tags: [Batch]
+ *     responses:
+ *       200:
+ *         description: List of serial numbers
+ */
+
+
+
+/**
+ * @swagger
+ * /batch/getbatchNo/bySerialNo:
+ *   post:
+ *     summary: Get batch numbers by serial number
+ *     tags: [Batch]
+ *     responses:
+ *       200:
+ *         description: List of batch numbers
+ */
+
+
+
+/**
+ * @swagger
+ * /batch/getExcelReport:
+ *   post:
+ *     summary: Generate batch Excel report
+ *     tags: [Batch]
+ *     responses:
+ *       200:
+ *         description: Batch Excel Report generated successfully
+ */
+
+
+
+/**
+ * @swagger
+ * /summary/getBatchName/byDate:
+ *   post:
+ *     summary: Get summary batch names by date
+ *     tags: [Summary]
+ *     responses:
+ *       200:
+ *         description: List of batch names
+ */
+
+
+
+/**
+ * @swagger
+ * /summary/getSerial/byBatchName:
+ *   post:
+ *     summary: Get summary serial numbers by batch name
+ *     tags: [Summary]
+ *     responses:
+ *       200:
+ *         description: List of serial numbers
+ */
+
+
+
+/**
+ * @swagger
+ * /summary/getExcelReport:
+ *   post:
+ *     summary: Generate summary Excel report
+ *     tags: [Summary]
+ *     responses:
+ *       200:
+ *         description: Summary Excel Report generated successfully
+ */
+

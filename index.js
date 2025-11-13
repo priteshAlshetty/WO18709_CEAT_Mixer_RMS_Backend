@@ -4,6 +4,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/config.swagger.js"); // <-- your swagger config
 const recipeRoutes = require('./routes/recipe.routes.js');
 const materialRoutes = require('./routes/material.routes.js');
+const reportRoutes = require('./routes/report.routes.js');
 const loggingMiddleware = require('./middleware/middleware.logger.js');
 const myData = require("./recipe_structure.json");
 const logger = require('./config/config.logger.js');
@@ -30,6 +31,7 @@ app.get('/recipeFormat', (req, res) => {
 
 app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
+app.use('/report', reportRoutes);
 
 // Global error handling middleware
 app.use((err, req, res, next) => {
