@@ -1,5 +1,5 @@
 const db = require("../config/config.mysql.report.js");
-
+const path = require("path");
 
 const ExcelJS = require("exceljs");
 
@@ -47,7 +47,7 @@ async function generateBatchReport({ batch_details, weighing_details, mixing_det
     const tableSubHeaderStyle = {
         font: { bold: true, size: 12 },
         alignment: { horizontal: "center" },
-        fill: { type: "pattern", pattern: "solid", fgColor: { argb: "e6e6e6" } },
+        fill: { type: "pattern", pattern: "solid", fgColor: { argb: "FFD6F7FF" } },
         border: {
             top: { style: "thin" },
             left: { style: "thin" },
@@ -296,13 +296,6 @@ async function generateBatchReport({ batch_details, weighing_details, mixing_det
     for (let i = 1; i <= mixingDataEndRow + 1; i++) {
         sheet.getRow(i).eachCell(cell => Object.assign(cell, cellBorder));
     }
-
-    //  -------------------------------
-
-
-
-
-
     // -------------------------------
     // 5. SAVE FILE
     // -------------------------------
@@ -320,8 +313,8 @@ async function getBatchDetails(params) {
         FROM 
         report_batch_details
         WHERE 
-        batch_no = ?  AND serial_no = ?;`
-        , [params.batch_no, params.serial_no]);
+        batch_no = ?  AND serial_no = ? AND recipe_id = ?;`
+        , [params.batch_no, params.serial_no, params.recipe_id]);
 
     if (batch_details.length === 0) {
         return null;
@@ -336,8 +329,8 @@ async function getWeighingDetails(params) {
         /* sql */`SELECT  
         material_type,material_code,  set_wt, act_wt 
         FROM report_material_log
-        WHERE batch_no = ?  AND serial_no = ?;`
-        , [params.batch_no, params.serial_no]);
+        WHERE batch_no = ?  AND serial_no = ? AND recipe_id = ?;`
+        , [params.batch_no, params.serial_no, params.recipe_id]);
 
     if (batch_details.length === 0) {
         return [];
@@ -354,7 +347,7 @@ async function getMixingDetails(params) {
         SELECT
         recipe_seq, mode, time_set, time_act, temp_set, temp_act, kw_set, kw_act, kwh_set, kwh_act, press_set, press_act, rpm_set, rpm_act
         FROM report_mixing_details
-        WHERE batch_no = ?  AND serial_no = ?; `, [params.batch_no, params.serial_no]);
+        WHERE batch_no = ?  AND serial_no = ? AND recipe_id = ? ;  `, [params.batch_no, params.serial_no, params.recipe_id]);
 
     if (mixing_details.length === 0) {
         return [];
@@ -415,14 +408,23 @@ async function generateExcelBatchReport(params) {
     }
 
     // Save workbook ONCE after all sheets added
-    const fileName = `BatchReports_All.xlsx`;
+    const fileName = path.join(__dirname, "reports", "batch_report", "BatchReports_All.xlsx");
+    // const fileName = `\\reports\\batch_report\\BatchReports_All.xlsx`;
     await workbook.xlsx.writeFile(fileName);
 
-    console.log(`🎉 All reports saved in: ${fileName}`);
+    // console.log(`🎉 All reports saved in: ${fileName}`);
+
+    return fileName;
 }
 
-generateExcelBatchReport([{ batch_no: 1, serial_no: 1756, recipe_id: 'MT671' }])
+// generateExcelBatchReport([{ batch_no: 1, serial_no: 1756, recipe_id: 'MT6710' },
+// { batch_no: 2, serial_no: 1756, recipe_id: 'MT6701' }, { batch_no: 3, serial_no: 1756, recipe_id: 'MT671' }
+// ]).then((filePath) => {
+//     console.log(filePath);
+// }).catch((error) => {
+//     console.error("Error generating batch reports:", error);
+// });
 
-// module.exports = {
-//     generateExcelBatchReport
-// };      
+module.exports = {
+    generateExcelBatchReport
+};      

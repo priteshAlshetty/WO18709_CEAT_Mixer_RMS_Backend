@@ -178,53 +178,189 @@
 
 /**
  * @swagger
- * /report/batch/getBatchName/bydate:
+ * /batch/getBatchName/bydate:
  *   post:
- *     summary: Get batch names by date
+ *     summary: Get batch names within a date range
  *     tags: [Batch]
- *     description: APIs for Report generation
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01T00:00:00"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-02T23:59:59"
  *     responses:
  *       200:
- *         description: List of batch names
+ *         description: Successfully fetched batch names
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 BATCH_NAME:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: No batch names found
+ *       500:
+ *         description: Internal Server Error
  */
-
-
 
 /**
  * @swagger
- * /report/batch/getSerial/byBatchName:
+ * /batch/getSerial/byBatchName:
  *   post:
- *     summary: Get serial numbers by batch name
+ *     summary: Get serial numbers by batch names and date range
  *     tags: [Batch]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - batchName
+ *               - from
+ *               - to
+ *             properties:
+ *               batchName:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["MT671", "MT680"]
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01T00:00:00"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-02T23:59:59"
  *     responses:
  *       200:
- *         description: List of serial numbers
+ *         description: Serial numbers fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 SERIAL_NO:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *       400:
+ *         description: Missing or invalid request fields
+ *       404:
+ *         description: No serial numbers found
+ *       500:
+ *         description: Internal Server Error
  */
-
-
 
 /**
  * @swagger
- * /report/batch/getbatchNo/bySerialNo:
+ * /batch/getbatchNo/bySerialNo:
  *   post:
  *     summary: Get batch numbers by serial number
  *     tags: [Batch]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - serialNo
+ *             properties:
+ *               serialNo:
+ *                 type: number
+ *                 example: 1756
  *     responses:
  *       200:
- *         description: List of batch numbers
+ *         description: Batch numbers fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 BATCH_NO:
+ *                   type: array
+ *                   items:
+ *                     type: number
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: No batch numbers found
+ *       500:
+ *         description: Internal Server Error
  */
-
-
 
 /**
  * @swagger
- * /report/batch/getExcelReport:
+ * /batch/getExcelReport:
  *   post:
- *     summary: Generate batch Excel report
+ *     summary: Generate Excel Batch Report for given parameters
  *     tags: [Batch]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - recipeId
+ *               - serialNo
+ *               - batchNo
+ *               - dttmFrom
+ *               - dttmTo
+ *             properties:
+ *               recipeId:
+ *                 type: string
+ *                 example: "MT671"
+ *               serialNo:
+ *                 type: number
+ *                 example: 1756
+ *               batchNo:
+ *                 type: number
+ *                 example: 1
+ *               dttmFrom:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01T00:00:00"
+ *               dttmTo:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-02T23:59:59"
  *     responses:
  *       200:
- *         description: Batch Excel Report generated successfully
+ *         description: Excel Report generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 reportPath:
+ *                   type: string
+ *                   example: "/reports/batch_report/BatchReport_1756_1.xlsx"
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal Server Error
  */
 
 
