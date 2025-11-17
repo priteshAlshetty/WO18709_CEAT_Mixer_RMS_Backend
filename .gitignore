@@ -62,3 +62,6 @@ docker-compose.override.yml
 
 # generated reports
 .xlsx
+*.xlsx
+reports/*
+controllers/reports/*
