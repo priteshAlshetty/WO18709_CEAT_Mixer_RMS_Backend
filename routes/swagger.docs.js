@@ -178,7 +178,7 @@
 
 /**
  * @swagger
- * /batch/getBatchName/bydate:
+ * /report/batch/getBatchName/bydate:
  *   post:
  *     summary: Get batch names within a date range
  *     tags: [Batch]
@@ -195,11 +195,11 @@
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01T00:00:00"
+ *                 example: "2025-11-07"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-02T23:59:59"
+ *                 example: "2025-11-07"
  *     responses:
  *       200:
  *         description: Successfully fetched batch names
@@ -222,7 +222,7 @@
 
 /**
  * @swagger
- * /batch/getSerial/byBatchName:
+ * /report/batch/getSerial/byBatchName:
  *   post:
  *     summary: Get serial numbers by batch names and date range
  *     tags: [Batch]
@@ -238,18 +238,17 @@
  *               - to
  *             properties:
  *               batchName:
- *                 type: array
- *                 items:
- *                   type: string
- *                 example: ["MT671", "MT680"]
+ *                 type: string
+ *                 description: batch Name or "All" for all batches
+ *                 example: "MT671"
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01T00:00:00"
+ *                 example: "2025-11-07"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-02T23:59:59"
+ *                 example: "2025-11-08"
  *     responses:
  *       200:
  *         description: Serial numbers fetched successfully
@@ -272,7 +271,7 @@
 
 /**
  * @swagger
- * /batch/getbatchNo/bySerialNo:
+ * /report/batch/getbatchNo/bySerialNo:
  *   post:
  *     summary: Get batch numbers by serial number
  *     tags: [Batch]
@@ -310,7 +309,7 @@
 
 /**
  * @swagger
- * /batch/getExcelReport:
+ * /report/batch/getExcelReport:
  *   post:
  *     summary: Generate Excel Batch Report for given parameters
  *     tags: [Batch]
@@ -329,21 +328,24 @@
  *             properties:
  *               recipeId:
  *                 type: string
+ *                 description: batch Name or "All" for all recipe ids
  *                 example: "MT671"
  *               serialNo:
  *                 type: number
+ *                 description: integer or "All" for all serial nos
  *                 example: 1756
  *               batchNo:
  *                 type: number
- *                 example: 1
+ *                 description: integer or "All" for all batch nos
+ *                 example: "All"
  *               dttmFrom:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01T00:00:00"
+ *                 example: "2025-11-07"
  *               dttmTo:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-02T23:59:59"
+ *                 example: "2025-11-07"
  *     responses:
  *       200:
  *         description: Excel Report generated successfully

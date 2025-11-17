@@ -1,7 +1,8 @@
 const express = require('express');
 const { getBatchNameByDate, getSerialByBatchName, getBatchNoBySerialNo, getExcelBatchReport } = require('../controllers/reporting.form.controller.js');
 const router = express.Router();
-
+const fs = require("fs");
+const path = require("path");
 
 router.post('/weighing/getExcelReport', async (req, res) => {
     let requestData = req.body;
@@ -117,24 +118,53 @@ router.post('/batch/getbatchNo/bySerialNo', async (req, res) => {
 
 
 
+
+
 router.post('/batch/getExcelReport', async (req, res) => {
-    let requestData = await req.body;
-    // console.log(requestData);
-    const { recipeId, serialNo, batchNo, dttmFrom, dttmTo } = requestData;
-    if (!recipeId || !serialNo || !batchNo || !dttmFrom || !dttmTo) {
-        return res.status(400).json({ message: "Missing required fields" });
+    try {
+        const requestData = req.body;
+
+        // ---- Validate body ----
+        const { recipeId, serialNo, batchNo, dttmFrom, dttmTo } = requestData || {};
+        if (!recipeId || !serialNo || !batchNo || !dttmFrom || !dttmTo) {
+            console.error("❌ Missing required fields:", requestData);
+            return res.status(400).json({ message: "Missing required fields" });
+        }
+
+        const reportParams = { recipeId, serialNo, batchNo, dttmFrom, dttmTo };
+
+        // ---- Generate Excel & get file path ----
+        let reportPath;
+        try {
+            reportPath = await getExcelBatchReport(reportParams);
+            console.log("✔ Generated Report path:", reportPath);
+        } catch (err) {
+            console.error("❌ Error generating Excel report:", err);
+            return res.status(500).json({ message: "Error generating the report", error: err.message, errorStack: err.stack });
+        }
+
+        // ---- Validate file existence ----
+        if (!reportPath || !fs.existsSync(reportPath)) {
+            console.error("❌ Report file not found at path:", reportPath);
+            return res.status(500).json({ message: "Generated report file not found" });
+        }
+
+        // ---- Send the file as a download ----
+        const downloadName = `BatchReport_${serialNo}_${batchNo}.xlsx`;
+
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error downloading file:", err);
+                return res.status(500).json({ message: "Error sending file", error: err.message, errorStack: err.stack });
+            }
+        });
+
+    } catch (error) {
+        console.error("🔥 Fatal Error in /batch/getExcelReport:", error);
+        return res.status(500).json({ message: "Internal Server Error", error: error.message, errorStack: error.stack });
     }
-    const reportParams = {
-        recipeId,
-        serialNo,
-        batchNo,
-        dttmFrom,
-        dttmTo
-    };
-    const reportPath = await getExcelBatchReport(reportParams);
-    console.log("Generated Report path:", reportPath);
-    res.status(200).json({ message: "Batch Excel Report generated successfully", reportPath });
-})
+});
+
 
 router.post('/summary/getBatchName/byDate', async (req, res) => {
     let requestData = await req.body;
