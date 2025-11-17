@@ -167,12 +167,56 @@
  * @swagger
  * /report/weighing/getExcelReport:
  *   post:
- *     summary: Generate weighing Excel report
+ *     summary: Generate and download Material Weighing Excel Report
+ *     description: Generates an Excel report using material weighing data filtered by date range and returns it as a downloadable file.
  *     tags: [Weighing]
- *     description: APIs for Report generation
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01"
+ *                 description: Start date of the weighing report range
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-30"
+ *                 description: End date of the weighing report range
  *     responses:
  *       200:
- *         description: Weighing Excel Report generated successfully
+ *         description: Excel Report generated successfully (file download)
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Missing required fields (from, to)
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Missing 'from' or 'to' date"
+ *       404:
+ *         description: No weighing data found for selected date range
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "No material weighing data found for the selected date range"
+ *       500:
+ *         description: Server error while generating or sending Excel report
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Internal Server Error"
+ *               error: "Error details here"
  */
 
 

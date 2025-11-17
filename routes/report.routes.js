@@ -1,22 +1,63 @@
 const express = require('express');
 const { getBatchNameByDate, getSerialByBatchName, getBatchNoBySerialNo, getExcelBatchReport } = require('../controllers/reporting.form.controller.js');
+const { generateExcelMaterialReport } = require('../controllers/report.controller.js');
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
 
 router.post('/weighing/getExcelReport', async (req, res) => {
-    let requestData = req.body;
-    console.log(requestData);
-    const { from, to } = requestData;
-    const batchNames = await getBatchNameByDate(from, to);
+    const { from, to } = req.body;
 
-    if (!batchNames) {
-        return res.status(404).json({ message: "No batch names found for the given date range" });
-    } else {
-        console.log("Batch Names:", batchNames);
-        res.status(200).json({ BATCH_NAME: batchNames });
+    if (!from || !to) {
+        return res.status(400).json({ message: "Missing 'from' or 'to' date" });
     }
-})
+
+    try {
+        // ⬅ generateExcelMaterialReport returns { status, filePath }
+        const result = await generateExcelMaterialReport({ from, to });
+
+        // ⛔ Case 1: No data found
+        if (result.status === false && result.code === "NO_DATA") {
+            return res.status(404).json({
+                message: "No material weighing data found for the selected date range"
+            });
+        }
+
+        // ⛔ Should never happen, but just in case
+        if (!result.filePath) {
+            return res.status(500).json({ message: "Report path missing" });
+        }
+
+        const reportPath = result.filePath;
+
+        // ⛔ Case 2: File missing on disk
+        if (!fs.existsSync(reportPath)) {
+            console.error("❌ Report file does not exist:", reportPath);
+            return res.status(500).json({ message: "Generated report file not found" });
+        }
+
+        // 🟢 Case 3: All good → Send Excel file
+        const downloadName = `MaterialReport_${from}_to_${to}.xlsx`;
+
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error sending file:", err);
+                return res.status(500).json({
+                    message: "Error sending file",
+                    error: err.message
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("🔥 Fatal Error in /weighing/getExcelReport:", error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+});
+
 
 
 router.post('/batch/getBatchName/bydate', async (req, res) => {
