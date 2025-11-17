@@ -388,9 +388,15 @@ async function generateExcelBatchReport(params) {
         console.log(`✔ Sheet added: ${serial_no}-${batch_no}`);
     }
 
+    // check for path exists
+    const dir = path.join(__dirname, "reports", "batch_report");
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
     // Save workbook ONCE after all sheets added
-    const fileName = path.join(__dirname, "reports", "batch_report", "BatchReports_All.xlsx");
-    // const fileName = `\\reports\\batch_report\\BatchReports_All.xlsx`;
+    const fileName = path.join(dir, "BatchReports_All.xlsx");
+
     await workbook.xlsx.writeFile(fileName);
 
     // console.log(`🎉 All reports saved in: ${fileName}`);
