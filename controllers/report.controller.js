@@ -1,6 +1,6 @@
 const db = require("../config/config.mysql.report.js");
 const path = require("path");
-
+const fs = require("fs");
 const ExcelJS = require("exceljs");
 
 // batch report generation function
@@ -356,25 +356,6 @@ async function getMixingDetails(params) {
     }
 }
 
-// async function generateExcelBatchReport(params) {
-
-//     for (const param of params) {
-//         const { batch_no, serial_no, recipe_id } = param;
-
-//         const batch_details = await getBatchDetails({ batch_no, serial_no, recipe_id });
-//         const weighing_details = await getWeighingDetails({ batch_no, serial_no, recipe_id });
-//         const mixing_details = await getMixingDetails({ batch_no, serial_no, recipe_id });
-//         const workbook = new ExcelJS.Workbook();
-
-//         workbook.creator = 'CEAT Mixer RMS';
-//         workbook.created = new Date();
-//         workbook.modified = new Date();
-//         const report = await generateBatchReport({ batch_details, weighing_details, mixing_details }, workbook, `${serial_no}-${batch_no}`);
-
-
-//     }
-// }
-
 async function generateExcelBatchReport(params) {
 
     // Create ONE workbook for all reports
@@ -416,114 +397,6 @@ async function generateExcelBatchReport(params) {
 
     return fileName;
 }
-
-// generateExcelBatchReport([{ batch_no: 1, serial_no: 1756, recipe_id: 'MT6710' },
-// { batch_no: 2, serial_no: 1756, recipe_id: 'MT6701' }, { batch_no: 3, serial_no: 1756, recipe_id: 'MT671' }
-// ]).then((filePath) => {
-//     console.log(filePath);
-// }).catch((error) => {
-//     console.error("Error generating batch reports:", error);
-// });
-
-
-// material report generation function
-
-// async function generateExcelMaterialReport(params) {
-//     try {
-
-//         const [rows] = await db.query(
-//         /* sql */`SELECT 
-//         material_type, material_code ,ROUND( SUM(act_wt),3) AS total_act_wt
-//         FROM 
-//         report_material_log
-//         WHERE 
-//         DTTM BETWEEN ? AND ?
-//         GROUP BY 
-//         material_type, material_code
-//         ORDER BY 
-//         material_type;`
-//             , [params.from, params.to]);
-
-//         if (rows.length === 0) {
-//             console.error("❌ No data for the given date range.");
-//             throw new Error("No data for the given date range.");
-//         }
-
-//         const workbook = new ExcelJS.Workbook();
-//         workbook.creator = 'CEAT Mixer RMS';
-//         workbook.created = new Date();
-//         workbook.modified = new Date();
-//         const sheet = workbook.addWorksheet('Material Report');
-
-//         // Define columns
-//         sheet.columns = [
-//             { header: 'Material Type', key: 'material_type', width: 30 },
-//             { header: 'Material Code', key: 'material_code', width: 20 },
-//             { header: 'Total Actual Weight (Kg)', key: 'total_act_wt', width: 25 }
-//         ];
-//         // insert rows at top
-//         sheet.insertRow(1, ['CEAT LIMITED AMBARNATH : MIXER 1']);
-//         sheet.insertRow(2, [`Material Report from ${params.from} to ${params.to}`]);
-//         sheet.mergeCells('A1:C1');
-//         sheet.mergeCells('A2:C2');
-
-//         //header styles
-
-//         sheet.getCell("A1").font = { bold: true, size: 16 };
-//         sheet.getCell("A1").alignment = { horizontal: "center", vertical: "middle" };
-//         sheet.getCell("A1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD6F7FF" } }
-//         sheet.getCell("A1").border = {
-//             top: { style: "thick" },
-//             left: { style: "thick" },
-//             right: { style: "thick" },
-//             bottom: { style: "thick" }
-//         }
-
-//         sheet.getCell("A2").font = { bold: true, size: 12 };
-//         sheet.getCell("A2").alignment = { horizontal: "center", vertical: "middle" };
-//         sheet.getCell("A2").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD6F7FF" } }
-//         // Add rows
-//         rows.forEach(row => {
-//             sheet.addRow(row);
-//         });
-
-//         // cell border style
-//         const cellBorder = {
-//             border: {
-//                 top: { style: "thin" },
-//                 left: { style: "thin" },
-//                 right: { style: "thin" },
-//                 bottom: { style: "thin" }
-//             }
-//         };
-//         // Apply border to all cells
-//         sheet.eachRow(row => {
-//             row.eachCell(cell => {
-//                 Object.assign(cell, cellBorder);
-//             });
-//         });
-
-
-//         // Save workbook
-//         const fileName = path.join(__dirname, "reports", "material_report", "MaterialReport.xlsx");
-//         await workbook.xlsx.writeFile(fileName);
-//         // console.log("Excel report created: MaterialReport.xlsx");
-//         return { status: true, fileName };
-
-//     } catch (error) {
-//         console.error("❌ Error generating material report:", error);
-//         throw error;
-//     }
-
-// }
-
-// generateExcelMaterialReport({ from: '2025-11-01', to: '2025-11-30' }).then((filePath) => {
-//     console.log(filePath);
-// }).catch((error) => {
-//     console.error("Error generating material report:", error);
-// });
-
-
 
 async function generateExcelMaterialReport(params) {
     try {
