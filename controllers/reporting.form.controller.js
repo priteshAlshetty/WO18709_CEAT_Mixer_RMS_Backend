@@ -64,13 +64,14 @@ async function getBatchReportQueryObj(params) {
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
                 FROM report_batch_details
-                WHERE DTTM BETWEEN ? AND ?
+                WHERE DATE(DTTM) BETWEEN ? AND ?
                 ORDER BY serial_no ASC, batch_no ASC
             `, [dttmFrom, dttmTo]);
 
             if (!rows || rows.length === 0) {
-                throw new Error("No data found for the given date range");
-
+                const err = new Error("No data found for the given date range");
+                err.code = "NO_DATA";
+                throw err;
             } else {
                 return rows;
             }
@@ -79,13 +80,14 @@ async function getBatchReportQueryObj(params) {
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
                 FROM report_batch_details
-                WHERE recipe_id =? AND  DTTM BETWEEN ? AND ? 
+                WHERE recipe_id =? AND DATE(DTTM) BETWEEN ? AND ? 
                 ORDER BY serial_no ASC, batch_no ASC
             `, [recipeId, dttmFrom, dttmTo]);
 
             if (!rows || rows.length === 0) {
-                throw new Error("No data found for the given date range");
-
+                const err = new Error("No data found for the given date range");
+                err.code = "NO_DATA";
+                throw err;
             } else {
                 return rows;
             }
@@ -96,13 +98,14 @@ async function getBatchReportQueryObj(params) {
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
                 FROM report_batch_details
-                WHERE recipe_id =? AND serial_no = ? AND DTTM BETWEEN ? AND ?
+                WHERE recipe_id =? AND serial_no = ? AND DATE(DTTM) BETWEEN ? AND ?
                 ORDER BY serial_no ASC, batch_no ASC
             `, [recipeId, serialNo, dttmFrom, dttmTo]);
 
             if (!rows || rows.length === 0) {
-                throw new Error("No data found for the given date range");
-
+                const err = new Error("No data found for the given date range");
+                err.code = "NO_DATA";
+                throw err;
             } else {
                 return rows;
             }
@@ -118,7 +121,7 @@ async function getBatchReportQueryObj(params) {
 
         return queryObj;
     } catch (error) {
-        console.error("🔥 Error in getExcelBatchReport:", error);
+        console.error("🔥 Error in getBatchReportQueryObj:", error);
         throw error;
     }
     // get report path
@@ -129,7 +132,7 @@ async function getBatchReportQueryObj(params) {
 async function getExcelBatchReport(obj) {
     try {
         const queryObj = await getBatchReportQueryObj(obj);
-        // console.log("Query Object:", queryObj);
+        console.log("Query Object:", queryObj);
         const reportFilePath = await generateExcelBatchReport(queryObj);
         if (!reportFilePath) {
             throw new Error("Failed to generate report");
@@ -137,7 +140,7 @@ async function getExcelBatchReport(obj) {
         return reportFilePath;
     } catch (error) {
         console.error("🔥 Error in getExcelBatchReport:", error);
-
+        throw error;
     }
 }
 module.exports = {
