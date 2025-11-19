@@ -110,12 +110,6 @@ async function getCleanoutReport(param) {
     }
 }
 
-// <<< THIS WAS MISSING
-getCleanoutReport({
-    from: "2025-11-18",
-    to: "2025-11-19"
-}).then(console.log);
-
 
 module.exports =
 {
