@@ -448,3 +448,66 @@
  *         description: Summary Excel Report generated successfully
  */
 
+/**
+ * @swagger
+ * /cleanoutReport/byDate:
+ *   post:
+ *     summary: Generate Cleanout Report (Excel)
+ *     description: |
+ *       Generates a Cleanout Excel report for the given date range.  
+ *       The report includes all CLEANOUT recipe material entries logged in `report_material_log`.  
+ *       Returns the generated Excel file as a download.
+ *
+ *     tags:
+ *       - Cleanout Reports
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-18"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-19"
+ *
+ *     responses:
+ *       200:
+ *         description: Excel report successfully generated and downloaded.
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *
+ *       400:
+ *         description: Missing input fields
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Missing 'from' or 'to' date"
+ *
+ *       404:
+ *         description: No data found for the given date range
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "No CleanoutReport data found for the selected date range"
+ *
+ *       500:
+ *         description: Internal server or file generation error
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Internal Server Error"
+ *               error: "Error details"
+ */

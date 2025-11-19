@@ -9,9 +9,9 @@ async function getCleanoutReport(param) {
         // Query Data
         const [rows] = await db.query(
             `SELECT * 
-             FROM report_material_log 
-             WHERE DATE(DTTM) BETWEEN ? AND ? 
-             AND recipe_id = 'CLEANOUT';`,
+            FROM report_material_log 
+            WHERE DATE(DTTM) BETWEEN ? AND ? 
+            AND recipe_id = 'CLEANOUT';`,
             [param.from, param.to]
         );
 
@@ -26,14 +26,14 @@ async function getCleanoutReport(param) {
         const sheet = workbook.addWorksheet("cleanout report");
 
         sheet.columns = [
-            { header: "Date", key: "date", width: 20 },
-            { header: "Time", key: "time", width: 20 },
+            { header: "Date", key: "date", width: 15 },
+            { header: "Time", key: "time", width: 15 },
             { header: "Recipe Name", key: "recipe_id", width: 20 },
             { header: "Material Code", key: "material_code", width: 25 },
             { header: "Material Name", key: "material_name", width: 25 },
             { header: "Material Type", key: "material_type", width: 20 },
-            { header: "Set Weight (Kg)", key: "set_wt", width: 20 },
-            { header: "Total Actual Weight (Kg)", key: "total_act_wt", width: 25 }
+            { header: "Set Weight (Kg)", key: "set_wt", width: 10 },
+            { header: "Total Actual Weight (Kg)", key: "total_act_wt", width: 10 }
         ];
 
         // Headers
@@ -115,3 +115,9 @@ getCleanoutReport({
     from: "2025-11-18",
     to: "2025-11-19"
 }).then(console.log);
+
+
+module.exports =
+{
+    getCleanoutReport
+}
