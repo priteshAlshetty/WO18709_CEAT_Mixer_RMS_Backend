@@ -2,6 +2,8 @@ const express = require('express');
 const { getBatchNameByDate, getSerialByBatchName, getBatchNoBySerialNo, getExcelBatchReport } = require('../controllers/reporting.form.controller.js');
 const { getCleanoutReport } = require('../controllers/cleanout.controller.js');
 const { generateExcelMaterialReport } = require('../controllers/report.controller.js');
+
+const { getShiftPlanReport } = require('../controllers/shiftplan.report.controller.js');
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
@@ -284,4 +286,60 @@ router.post('/cleanoutReport/byDate', async (req, res) => {
     }
 
 })
+
+router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
+    const { from, to } = req.body;
+
+    if (!from || !to) {
+        return res.status(400).json({ message: "Missing 'from' or 'to' date" });
+    }
+
+    try {
+        // ⬅ generateExcelMaterialReport returns { status, filePath }
+        const result = await getShiftPlanReport({ from, to });
+
+        // ⛔ Case 1: No data found
+        if (result.status === false && result.code === "NO_DATA") {
+            return res.status(404).json({
+                message: "No Shift plan execution data found for the selected date range"
+            });
+        }
+
+        // ⛔ Should never happen, but just in case
+        if (!result.filePath) {
+            return res.status(500).json({ message: "Report path missing" });
+        }
+
+        const reportPath = result.filePath;
+
+        // ⛔ Case 2: File missing on disk
+        if (!fs.existsSync(reportPath)) {
+            console.error("❌ Report file does not exist:", reportPath);
+            return res.status(500).json({ message: "Generated report file not found" });
+        }
+
+        // 🟢 Case 3: All good → Send Excel file
+        const downloadName = `ShiftPlanReport_${from}_to_${to}.xlsx`;
+
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error sending file:", err);
+                return res.status(500).json({
+                    message: "Error sending file",
+                    error: err.message
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("🔥 Fatal Error in /shiftPlanReport/getExcelReport/complete:", error);
+        return res.status(500).json({
+            message: "ERR: Internal Server Error",
+            errLoc: "At try catch block of route /shiftPlanReport/getExcelReport/complete",
+            error: error.message
+        });
+    }
+});
+
+
 module.exports = router;

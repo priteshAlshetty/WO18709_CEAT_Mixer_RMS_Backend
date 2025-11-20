@@ -511,3 +511,84 @@
  *               message: "Internal Server Error"
  *               error: "Error details"
  */
+/**
+ * @swagger
+ * /shiftPlan/getExcelReport/complete:
+ *   post:
+ *     summary: Generate and download Shift Plan Execution Excel Report
+ *     tags:
+ *       - SHIFT PLAN REPORTS
+ *     description: |
+ *       Generates an Excel report of the shift plan execution for the given date range.
+ *       The report includes Date, Time, Shift, Serial no, Recipe name, Set Batch, Finished Batch, and Username.
+ *       Returns the Excel file if data exists; otherwise returns appropriate error messages.
+ * 
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-11-19"
+ *                 description: Start date for filtering (YYYY-MM-DD)
+ *               to:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-11-20"
+ *                 description: End date for filtering (YYYY-MM-DD)
+ * 
+ *     responses:
+ *       200:
+ *         description: Excel report successfully generated and downloaded.
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ * 
+ *       400:
+ *         description: Missing required date parameters.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Missing 'from' or 'to' date"
+ * 
+ *       404:
+ *         description: No shift plan execution data found for selected date range.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No Shift plan execution data found for the selected date range"
+ * 
+ *       500:
+ *         description: Internal server error while generating or downloading report.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "ERR: Internal Server Error"
+ *                 errLoc:
+ *                   type: string
+ *                   example: "At try catch block of route /shiftPlanReport/getExcelReport/complete"
+ *                 error:
+ *                   type: string
+ *                   example: "Unexpected error occurred"
+ */
