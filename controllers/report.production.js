@@ -58,7 +58,7 @@ async function getProductionReport(params) {
         if (!result.status) {
             throw result.error;
         }
-        console.dir(result, { depth: null, colors: true });
+        // console.dir(result, { depth: null, colors: true });
         const rows = result.data;
 
         // STEP 2 → Prepare Excel Workbook
@@ -72,8 +72,8 @@ async function getProductionReport(params) {
             { header: "Date", key: "date", width: 15 },                         //1
             { header: "Serial No", key: "serial_no", width: 15 },               //2
             { header: "Recipe ID", key: "recipe_id", width: 15 },               //3 
-            { header: "Set Batch", key: "set_batch", width: 15 },               //4
-            { header: "Batch No", key: "batch_no", width: 10 },                 //5
+            { header: "Batch No", key: "batch_no", width: 10 },                 //4
+            { header: "Set Batch", key: "set_batch", width: 15 },               //5
             { header: "Start Time", key: "start_time", width: 20 },             //6
             { header: "Stop Time", key: "stop_time", width: 20 },               //7
             { header: "Cycle Time (s)", key: "cycle_time", width: 15 },           //8
@@ -140,7 +140,11 @@ async function getProductionReport(params) {
     }
 }
 
-getProductionReport({ from: "2025-11-24", to: "2025-11-24" })
-    .then(result => {
-        console.log(result);
-    })
+// getProductionReport({ from: "2025-11-24", to: "2025-11-24" })
+//     .then(result => {
+//         console.log(result);
+//     })
+
+module.exports = {
+    getProductionReport
+};

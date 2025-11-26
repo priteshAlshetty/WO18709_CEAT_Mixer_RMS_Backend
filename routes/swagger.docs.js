@@ -592,3 +592,75 @@
  *                   type: string
  *                   example: "Unexpected error occurred"
  */
+
+/**
+ * @swagger
+ * /production/getExcelReport/complete:
+ *   post:
+ *     summary: Generate and download the complete Production Excel Report
+ *     description: >
+ *       Generates a production report Excel file based on the provided date range.
+ *       The system calculates cycle time and BWB time for each batch and returns an Excel file.
+ *
+ *     tags:
+ *       - Production Reports
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-11-20"
+ *                 description: Start date (YYYY-MM-DD)
+ *               to:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-11-24"
+ *                 description: End date (YYYY-MM-DD)
+ *
+ *     responses:
+ *       200:
+ *         description: Excel report generated successfully
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *
+ *       400:
+ *         description: Missing date input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 message: "Missing 'from' or 'to' date"
+ *
+ *       404:
+ *         description: No production data found for the given range
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 message: "No production data found for the selected date range"
+ *
+ *       500:
+ *         description: Internal server error while generating or sending the report
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 message: "ERR: Internal Server Error"
+ *                 errLoc: "At try catch block of route /production/getExcelReport/complete"
+ *                 error: "Error details"
+ */
