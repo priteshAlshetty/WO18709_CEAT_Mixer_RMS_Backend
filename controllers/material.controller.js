@@ -62,11 +62,11 @@ async function addMaterial(materialData) {
     try {
         const [result] = await db.query("INSERT INTO `material_manager` (`material_code`, `material_name`, `material_type`) VALUES (?, ?, ?)", [materialData.material_code, materialData.material_name, materialData.material_type]);
 
-        if (result.affectedRows >0) {
+        if (result.affectedRows > 0) {
             return {
                 success: true,
                 message: "Insert successful for : " + materialData.material_code,
-                
+
                 data: result
             };
         } else {
@@ -116,9 +116,45 @@ async function deleteMaterial(materialData) {
     }
 }
 
+async function getDropdownMaterials() {
+
+    try {
+        const [CB] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='CB'  ORDER BY `material_name` ASC");
+
+        const [PD] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='PD'  ORDER BY `material_name` ASC");
+        const [Poly] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='Poly'  ORDER BY `material_name` ASC");
+        const [FL] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='FL'  ORDER BY `material_name` ASC");
+        const [Oil1] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='Oil1'  ORDER BY `material_name` ASC");
+        const [Oil2] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='Oil2'  ORDER BY `material_name` ASC");
+        return {
+            success: true,
+            data: {
+                CB: CB,
+                PD: PD,
+                Poly: Poly,
+                FL: FL,
+                Oil1: Oil1,
+                Oil2: Oil2
+            }
+        }
+
+    } catch (error) {
+        return {
+            success: false,
+            errLocation: "getDropdownMaterials() func call at try-catch block.",
+            error: error.message
+        }
+    }
+}
+
+
+
+
+
 module.exports = {
     getAllMaterials,
     addMaterial,
-    deleteMaterial
+    deleteMaterial,
+    getDropdownMaterials
 }
 //TODO: Implement add, delete and update functions for materials
