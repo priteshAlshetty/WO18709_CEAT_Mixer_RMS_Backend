@@ -664,3 +664,31 @@
  *                 errLoc: "At try catch block of route /production/getExcelReport/complete"
  *                 error: "Error details"
  */
+
+/**
+ * @swagger
+ * /material/getMaterials:
+ *   get:
+ *     summary: Get all materials
+ *     description: Returns the complete list of materials stored in the database.
+ *     tags:
+ *       - Materials
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved materials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   material_code:
+ *                     type: string
+ *                   material_name:
+ *                     type: string
+ *                   material_type:
+ *                     type: string
+ *       500:
+ *         description: Internal server error
+ */
