@@ -147,5 +147,6 @@ module.exports = {
     getBatchNameByDate,
     getSerialByBatchName,
     getBatchNoBySerialNo,
-    getExcelBatchReport
+    getExcelBatchReport,
+    getBatchReportQueryObj
 };

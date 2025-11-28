@@ -5,8 +5,8 @@ const swaggerDefinition = {
     openapi: "3.0.0",
     info: {
         title: "Mixer RMS API Docs",
-        version: "1.0.0",
-        description: "API documentation for Mixer RMS project (material + recipe management).",
+        version: "1.1.0",
+        description: "API documentation for Mixer Central RMS project (material + recipe management).",
     },
     servers: [
         {

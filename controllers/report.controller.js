@@ -499,5 +499,8 @@ async function generateExcelMaterialReport(params) {
 
 module.exports = {
     generateExcelBatchReport,
+    getBatchDetails,
+    getWeighingDetails,
+    getMixingDetails,
     generateExcelMaterialReport
 };      

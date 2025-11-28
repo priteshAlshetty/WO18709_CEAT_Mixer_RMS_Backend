@@ -170,6 +170,7 @@
  *     summary: Generate and download Material Weighing Excel Report
  *     description: Generates an Excel report using material weighing data filtered by date range and returns it as a downloadable file.
  *     tags: [Weighing]
+ *        
  *     requestBody:
  *       required: true
  *       content:
@@ -672,7 +673,7 @@
  *     summary: Get all materials
  *     description: Returns the complete list of materials stored in the database.
  *     tags:
- *       - Materials
+ *       - Material Manager
  *     responses:
  *       200:
  *         description: Successfully retrieved materials
@@ -689,6 +690,81 @@
  *                     type: string
  *                   material_type:
  *                     type: string
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /material/addMaterial:
+ *   post:
+ *     summary: Add a new material
+ *     description: Creates a new material entry in the system.
+ *     tags:
+ *       - Material Manager
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - material_data
+ *             properties:
+ *               material_data:
+ *                 type: object
+ *                 required:
+ *                   - material_code
+ *                   - material_name
+ *                   - material_type
+ *                 properties:
+ *                   material_code:
+ *                     type: string
+ *                     example: "CB01"
+ *                   material_name:
+ *                     type: string
+ *                     example: "Carbon Black"
+ *                   material_type:
+ *                     type: string
+ *                     example: "Raw Material"
+ *     responses:
+ *       201:
+ *         description: Material created successfully
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /material/deleteMaterial:
+ *   delete:
+ *     summary: Delete a material
+ *     description: Deletes a material based on the provided material_code.
+ *     tags:
+ *       - Material Manager
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - material_data
+ *             properties:
+ *               material_data:
+ *                 type: object
+ *                 required:
+ *                   - material_code
+ *                 properties:
+ *                   material_code:
+ *                     type: string
+ *                     example: "CB01"
+ *     responses:
+ *       200:
+ *         description: Material deleted or not found
+ *       400:
+ *         description: Missing material_code field
  *       500:
  *         description: Internal server error
  */
