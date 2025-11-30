@@ -6,6 +6,12 @@ const { generateExcelMaterialReport } = require('../controllers/report.controlle
 const { getShiftPlanReport } = require('../controllers/shiftplan.report.controller.js');
 const { getProductionReport } = require('../controllers/report.production.js');
 
+const {
+    generateSummaryExcelReport,
+    getRecipeIdsBtDateTime,
+    getSerialByBatchName,
+} = require('../controllers/summary.controller.js');
+
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
@@ -211,28 +217,73 @@ router.post('/batch/getExcelReport', async (req, res) => {
     }
 });
 
+//------------------ Summary Report Routes ------------------//
 
-router.post('/summary/getBatchName/byDate', async (req, res) => {
-    let requestData = await req.body;
-    console.log(requestData);
-    //TODO: Implement logic to fetch batch names by date
-    res.status(200).json({ BATCH_NAME: ['MT051', 'MT052', 'MT053'] });
+router.post('/summary/getBatchName/byDateTime', async (req, res) => {
+    try {
+        let requestData = await req.body;
+        const { from, to } = requestData;
+        if (from === undefined || to === undefined) {
+            return res.status(400).json({ message: "Missing 'from' or 'to' date" });
+        }
+        const batchNames = await getRecipeIdsBtDateTime({ dttmFrom: from, dttmTo: to });
+        if (!batchNames || batchNames.length === 0) {
+            return res.status(404).json({ message: "No Recipe IDs found" });
+        }
+        res.status(200).json({ BATCH_NAME: batchNames });
+    } catch (error) {
+        console.error("🔥 Error in /summary/getBatchName/byDateTime:", error);
+        return res.status(500).json({ message: "Internal Server Error", error });
+    }
 })
 
 router.post('/summary/getSerial/byBatchName', async (req, res) => {
-    let requestData = await req.body;
-    console.log(requestData);
-    //TODO: Implement logic to fetch serial numbers by batch name
-    res.status(200).json({ SERIAL_NO: ['1952', '1953', '1954'] });
+
+    try {
+        const requestData = await req.body;
+        const { from, to, batch_name } = requestData;
+        if (!from || !to || !batch_name) {
+            return res.status(400).json({ message: "Missing 'from', 'to', or 'batch_name'" });
+        }
+        const serialNumbers = await getSerialByBatchName(batch_name, from, to);
+        if (!serialNumbers || serialNumbers.length === 0) {
+            return res.status(404).json({ message: "No Serial Numbers found" });
+        }
+        res.status(200).json({ SERIAL_NUMBERS: serialNumbers });
+
+    } catch (error) {
+        console.error("🔥 Error in /summary/getSerial/byBatchName", error);
+        return res.status(500).json({ message: "Internal Server Error", error });
+    }
 })
 
 router.post('/summary/getExcelReport', async (req, res) => {
     let requestData = await req.body;
-    console.log(requestData);
-    //TODO: Implement logic to generate and return the Excel report
-    res.status(200).json({ message: "Summary Excel Report generated successfully" });
-})
+    const { from, to, batch_name, serial_no } = requestData;
 
+    if (!from || !to || !batch_name || !serial_no) {
+        return res.status(400).json({ message: "Missing 'from', 'to', 'batch_name', or 'serial_no'" });
+    }
+    try {
+        const reportPath = await generateSummaryExcelReport({ from, to, batch_name, serial_no });
+        if (!reportPath || !fs.existsSync(reportPath)) {
+            return res.status(500).json({ message: "Generated report file not found" });
+        }
+        const downloadName = `SummaryReport_${batch_name}_${serial_no}.xlsx`;
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error sending file:", err);
+                return res.status(500).json({
+                    message: "Error sending file",
+                    error: err.message
+                });
+            }
+        });
+    } catch (error) {
+        console.error("🔥 Fatal Error in /summary/getExcelReport:", error);
+        return res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+})
 
 router.post('/cleanoutReport/byDate', async (req, res) => {
 
@@ -342,7 +393,6 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
         });
     }
 });
-
 
 router.post('/production/getExcelReport/complete', async (req, res) => {
     const { from, to } = req.body;

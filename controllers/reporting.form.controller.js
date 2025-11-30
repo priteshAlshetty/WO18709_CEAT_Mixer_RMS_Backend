@@ -17,22 +17,27 @@ async function getBatchNameByDate(from, to) {
 
 async function getSerialByBatchName(batchName, from, to) {
 
-    const placeholders = batchName.map(() => "?").join(","); // Create placeholders for the IN clause
-    const query = `
-        SELECT DISTINCT serial_no AS SERIAL_NO
+    if (batchName.toLowerCase() === "all") {
+        const [rows] = await db.query(` SELECT DISTINCT serial_no AS SERIAL_NO
         FROM report_batch_details
         WHERE DATE(DTTM) BETWEEN ? AND ?
-        AND recipe_id IN (${placeholders})
-        ORDER BY serial_no ASC
-    `;
-    const queryParams = [from, to, ...batchName];
-
-    const [rows] = await db.query(query, queryParams);
-
-    if (rows.length > 0) {
-        return rows.map(row => row.SERIAL_NO);
+        ORDER BY serial_no ASC `, [from, to]);
+        if (rows.length > 0) {
+            return rows.map(row => row.SERIAL_NO);
+        } else {
+            return null;
+        }
     } else {
-        return null;
+        const [rows] = await db.query(` SELECT DISTINCT serial_no AS SERIAL_NO
+        FROM report_batch_details
+        WHERE DATE(DTTM) BETWEEN ? AND ?
+        AND recipe_id = ?
+        ORDER BY serial_no ASC `, [from, to, batchName]);
+        if (rows.length > 0) {
+            return rows.map(row => row.SERIAL_NO);
+        } else {
+            return null;
+        }
     }
 }
 
