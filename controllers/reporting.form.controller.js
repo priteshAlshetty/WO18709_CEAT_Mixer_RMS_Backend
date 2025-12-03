@@ -16,8 +16,10 @@ async function getBatchNameByDate(from, to) {
 }
 
 async function getSerialByBatchName(batchName, from, to) {
+    console.log("Fetching serial numbers for batch name:", batchName, "from", from, "to", to);
+    batchName = String(batchName || "").trim().toLowerCase();
 
-    if (batchName.toLowerCase() === "all") {
+    if (batchName === "all") {
         const [rows] = await db.query(` SELECT DISTINCT serial_no AS SERIAL_NO
         FROM report_batch_details
         WHERE DATE(DTTM) BETWEEN ? AND ?
