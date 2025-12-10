@@ -1040,3 +1040,147 @@
  *       500:
  *         description: Internal server error
  */
+/**
+ * @swagger
+ * /downtime/deleteDowntime:
+ *   post:
+ *     summary: Delete a downtime record by SR number
+ *     tags:
+ *       - Downtime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sr
+ *             properties:
+ *               sr:
+ *                 type: integer
+ *                 example: 1
+ *                 description: SR identifier of the downtime record to delete
+ *     responses:
+ *       200:
+ *         description: Downtime deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 result:
+ *                   type: object
+ *                   example:
+ *                     affectedRows: 1
+ *                     warningCount: 0
+ *       400:
+ *         description: Missing or invalid SR value
+ *       404:
+ *         description: No record found to delete
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /downtime/addDowntime:
+ *   post:
+ *     summary: Add a new downtime entry
+ *     tags:
+ *       - Downtime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - downtime_start
+ *               - downtime_stop
+ *               - error_code
+ *               - category
+ *               - sub_category
+ *               - description
+ *             properties:
+ *               downtime_start:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-10 08:15:00"
+ *               downtime_stop:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-10 08:25:00"
+ *               error_code:
+ *                 type: string
+ *                 example: "E101"
+ *               category:
+ *                 type: string
+ *                 example: "Mechanical"
+ *               sub_category:
+ *                 type: string
+ *                 example: "Gearbox"
+ *               description:
+ *                 type: string
+ *                 example: "Gearbox overheating"
+ *     responses:
+ *       200:
+ *         description: Downtime record added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 result:
+ *                   type: object
+ *                   example:
+ *                     insertId: 15
+ *                     affectedRows: 1
+ *                     warningCount: 0
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /downtime/generateReport:
+ *   post:
+ *     summary: Generate an Excel report for downtime within a datetime range
+ *     tags:
+ *       - Downtime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-10T00:00:00Z"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-12T23:59:59Z"
+ *     responses:
+ *       200:
+ *         description: Excel report generated successfully
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Missing required date range
+ *       500:
+ *         description: Internal server error
+ */
