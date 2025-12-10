@@ -875,3 +875,168 @@
  *       500:
  *         description: Internal server error
  */
+/**
+ * @swagger
+ * /downtime/getDowntime/byDateTime:
+ *   post:
+ *     summary: Fetch downtime records between a given datetime range
+ *     tags:
+ *       - Downtime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-09T00:00:00.000Z"
+ *                 description: Start datetime (UTC or ISO format)
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-12T23:59:59.000Z"
+ *                 description: End datetime (UTC or ISO format)
+ *     responses:
+ *       200:
+ *         description: Downtime data returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 downtime_data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       sr:
+ *                         type: integer
+ *                         example: 1
+ *                       DTTM:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-02-10 08:15:00"
+ *                       shift:
+ *                         type: string
+ *                         example: "A"
+ *                       downtime_start:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-02-10 08:15:00"
+ *                       downtime_stop:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2025-02-10 08:25:00"
+ *                       error_code:
+ *                         type: string
+ *                         example: "E101"
+ *                       category:
+ *                         type: string
+ *                         example: "Mechanical"
+ *                       sub_category:
+ *                         type: string
+ *                         example: "Gearbox"
+ *                       current_login:
+ *                         type: string
+ *                         example: "operator01"
+ *                       description:
+ *                         type: string
+ *                         example: "Gearbox overheating"
+ *       400:
+ *         description: Missing required parameters (from, to)
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /downtime/updateDowntime:
+ *   post:
+ *     summary: Update downtime records in bulk
+ *     tags:
+ *       - Downtime
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - downtime_data
+ *             properties:
+ *               downtime_data:
+ *                 type: array
+ *                 description: Array of downtime objects to update
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - sr
+ *                     - DTTM
+ *                     - shift
+ *                     - downtime_start
+ *                     - downtime_stop
+ *                     - error_code
+ *                     - category
+ *                     - sub_category
+ *                     - current_login
+ *                     - description
+ *                   properties:
+ *                     sr:
+ *                       type: integer
+ *                       example: 1
+ *                       description: Primary key of downtime record (used for update)
+ *                     DTTM:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-10 08:15:00"
+ *                     shift:
+ *                       type: string
+ *                       example: "A"
+ *                     downtime_start:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-10 08:15:00"
+ *                     downtime_stop:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-10 08:25:00"
+ *                     error_code:
+ *                       type: string
+ *                       example: "E101"
+ *                     category:
+ *                       type: string
+ *                       example: "Mechanical"
+ *                     sub_category:
+ *                       type: string
+ *                       example: "Gearbox"
+ *                     current_login:
+ *                       type: string
+ *                       example: "operator01"
+ *                     description:
+ *                       type: string
+ *                       example: "Gearbox overheating"
+ *     responses:
+ *       200:
+ *         description: Downtime records updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: true
+ *                 affectedRows:
+ *                   type: integer
+ *                   example: 1
+ *       400:
+ *         description: Missing or invalid downtime_data
+ *       500:
+ *         description: Internal server error
+ */

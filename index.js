@@ -5,6 +5,7 @@ const swaggerSpec = require("./config/config.swagger.js"); // <-- your swagger c
 const recipeRoutes = require('./routes/recipe.routes.js');
 const materialRoutes = require('./routes/material.routes.js');
 const reportRoutes = require('./routes/report.routes.js');
+const downtimeRoutes = require('./routes/downtime.route.js');
 const loggingMiddleware = require('./middleware/middleware.logger.js');
 const myData = require("./recipe_structure.json");
 const logger = require('./config/config.logger.js');
@@ -33,6 +34,7 @@ app.use(loggingMiddleware);
 app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
 app.use('/report', reportRoutes);
+app.use('/downtime', downtimeRoutes);
 // Global error handling middleware
 app.use((err, req, res, next) => {
     logger.error({
