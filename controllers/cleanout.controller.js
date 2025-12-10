@@ -11,7 +11,7 @@ async function getCleanoutReport(param) {
             `SELECT * 
             FROM report_material_log 
             WHERE DATE(DTTM) BETWEEN ? AND ? 
-            AND recipe_id = 'CLEANOUT';`,
+            AND LOWER(recipe_id) = 'cleanout';`,
             [param.from, param.to]
         );
 
@@ -21,7 +21,8 @@ async function getCleanoutReport(param) {
             err.message = "No data found for given date range";
             throw err;
         }
-
+        // console.dir("Rows fetched for cleanout report: ", rows.length);
+        // console.dir(rows, { depth: null, maxArrayLength: null, colors: true });
         const workbook = new ExcelJS.Workbook();
         const sheet = workbook.addWorksheet("cleanout report");
 
@@ -32,8 +33,8 @@ async function getCleanoutReport(param) {
             { header: "Material Code", key: "material_code", width: 25 },
             { header: "Material Name", key: "material_name", width: 25 },
             { header: "Material Type", key: "material_type", width: 20 },
-            { header: "Set Weight (Kg)", key: "set_wt", width: 10 },
-            { header: "Total Actual Weight (Kg)", key: "total_act_wt", width: 10 }
+            { header: "Set Weight (Kg)", key: "set_wt", width: 18 },
+            { header: "Total Actual Weight (Kg)", key: "total_act_wt", width: 25 }
         ];
 
         // Headers
@@ -65,8 +66,8 @@ async function getCleanoutReport(param) {
         // Data rows
         rows.forEach(r => {
             sheet.addRow({
-                date: r.DTTM.toISOString().split("T")[0],
-                time: r.DTTM.toISOString().split("T")[1].substring(0, 8),
+                date: new Date(r.DTTM).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }),
+                time: new Date(r.DTTM).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata' }),
                 recipe_id: r.recipe_id,
                 material_code: r.material_code,
                 material_name: r.material_name,

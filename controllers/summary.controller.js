@@ -20,17 +20,22 @@ async function getRecipeIdsBtDateTime(params) {
     }
     return row.map(item => item.BATCH_NAME);
 }
-async function getSerialByBatchName(params) {
-    if (params.BATCH_NAME.toLowerCase() === "all") {
+
+async function getSerialByBatchFromSummary(params) {
+    if (!params.batch_name || params.batch_name.toLowerCase() === "all") {
         const [rows] = await db.query(`
             SELECT DISTINCT serial_no AS SERIAL_NO
             FROM report_batch_details
             WHERE DTTM BETWEEN ? AND ?
-            ORDER BY serial_no ASC;`, [params.dttmFrom, params.dttmTo]);
+            ORDER BY serial_no ASC;`, [params.from, params.to]);
+
         if (rows.length === 0) {
-            return {};
+            return rows;
         }
-        return rows.map(item => item.SERIAL_NO);
+
+        let result = rows.map(item => item.SERIAL_NO);
+        // console.log(result);
+        return result;
 
     }
     else {
@@ -38,9 +43,9 @@ async function getSerialByBatchName(params) {
             SELECT DISTINCT serial_no AS SERIAL_NO
             FROM report_batch_details
             WHERE DTTM BETWEEN ? AND ? AND recipe_id = ?
-            ORDER BY serial_no ASC;`, [params.dttmFrom, params.dttmTo, params.BATCH_NAME]);
+            ORDER BY serial_no ASC;`, [params.from, params.to, params.batch_name]);
         if (rows.length === 0) {
-            return {};
+            return rows;
         }
         return rows.map(item => item.SERIAL_NO);
     }
@@ -104,6 +109,7 @@ async function getSummaryData(params) {
         const queryObj = await getBatchReportQueryObj(params);
         // console.log("Query Object:", queryObj);
         // this is missing now
+
         const summary_data = [];
 
         for (const row of queryObj) {
@@ -207,7 +213,7 @@ async function generateSummaryExcelReport(params) {
 
         //add heading style
         sheet.insertRow(1, ["CEAT LIMITED AMBARNATH : MIXER 1"]);
-        sheet.insertRow(2, [`Summary Report `]);
+        sheet.insertRow(2, [`Summary Report from ${params.dttmFrom} to ${params.dttmTo} `]);
 
         sheet.getCell("A1").font = { size: 16, bold: true };
         sheet.getCell("A1").alignment = { horizontal: "center" };
@@ -228,17 +234,17 @@ async function generateSummaryExcelReport(params) {
                 recipe_id: data.recipe_id || "",
                 serial_no: data.serial_no || "",
                 batch_no: data.batch_no || "",
-                used_time: data.used_time || "",
-                discharge_time: data.dis_time || "",
-                discharge_temp: data.dis_temp || "",
-                discharge_power: data.dis_power || "",
-                discharge_energy: data.dis_energy || "",
-                oil_time: data.oil_time || "",
-                oil_temp: data.oil_temp || "",
-                oil_feed: data.oil_feed || "",
-                cb_time: data.cb_time || "",
-                mixer_mode: data.mode || "",
-                bwb: data.bwb || "",
+                used_time: data.used_time || "0",
+                discharge_time: data.dis_time || "0",
+                discharge_temp: data.dis_temp || "0",
+                discharge_power: data.dis_power || "0",
+                discharge_energy: data.dis_energy || "0",
+                oil_time: data.oil_time || "0",
+                oil_temp: data.oil_temp || "0",
+                oil_feed: data.oil_feed || "0",
+                cb_time: data.cb_time || "0",
+                mixer_mode: data.mode || "0",
+                bwb: data.bwb || "0",
 
                 // MATERIALS (UPPERCASE KEYS)
                 CB1_name: data.CB1_name || "",
@@ -360,5 +366,5 @@ async function generateSummaryExcelReport(params) {
 module.exports = {
     generateSummaryExcelReport,
     getRecipeIdsBtDateTime,
-    getSerialByBatchName,
+    getSerialByBatchFromSummary,
 };

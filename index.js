@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;
 // Enable CORS for all requests
 app.use(cors());
 
-app.use(loggingMiddleware);
+
 
 
 // Parse JSON and urlencoded bodies
@@ -27,12 +27,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/recipeFormat', (req, res) => {
     res.status(200).json(recipeFormat)
-}); 
+});
+app.use(loggingMiddleware);
 
 app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
 app.use('/report', reportRoutes);
-
 // Global error handling middleware
 app.use((err, req, res, next) => {
     logger.error({
@@ -51,7 +51,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // Create server instance
 const server = app.listen(port, '0.0.0.0', () => {
     logger.info(`RMS backend app listening on port ${port}`);
-    console.log(`RMS backend app listening on port ${port}`);   
+    console.log(`RMS backend app listening on port ${port}`);
 });
 
 // Graceful shutdown handling

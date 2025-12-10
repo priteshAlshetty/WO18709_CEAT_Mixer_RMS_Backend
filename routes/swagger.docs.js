@@ -411,43 +411,150 @@
  */
 
 
-
 /**
  * @swagger
- * /report/summary/getBatchName/byDate:
+ * /report/summary/getBatchName/byDateTime:
  *   post:
- *     summary: Get summary batch names by date
- *     tags: [Summary]
+ *     summary: Get batch/recipe names between datetime range
+ *     tags:
+ *       - Summary Report
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01 00:00:00"
+ *                 description: Start DateTime filter
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-12-01 23:59:59"
+ *                 description: End DateTime filter
  *     responses:
  *       200:
- *         description: List of batch names
+ *         description: Successfully fetched batch/recipe names
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 BATCH_NAME:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["CLEANOUT", "TBM01", "MIXING01"]
+ *       400:
+ *         description: Missing date range values
+ *       404:
+ *         description: No batch names found for given period
+ *       500:
+ *         description: Internal server error
  */
-
-
-
 /**
  * @swagger
  * /report/summary/getSerial/byBatchName:
  *   post:
- *     summary: Get summary serial numbers by batch name
- *     tags: [Summary]
+ *     summary: Get serial numbers for a batch within datetime range
+ *     tags:
+ *       - Summary Report
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *               - batch_name
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01 00:00:00"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-12-01 23:59:59"
+ *               batch_name:
+ *                 type: string
+ *                 example: "CLEANOUT"
  *     responses:
  *       200:
- *         description: List of serial numbers
+ *         description: Successfully fetched serial numbers
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 SERIAL_NO:
+ *                   type: array
+ *                   items:
+ *                     type: integer
+ *                   example: [2042, 2043, 2044, 2045]
+ *       400:
+ *         description: Missing required fields
+ *       404:
+ *         description: No serial numbers found
+ *       500:
+ *         description: Internal server error
  */
-
-
-
 /**
  * @swagger
  * /report/summary/getExcelReport:
  *   post:
- *     summary: Generate summary Excel report
- *     tags: [Summary]
+ *     summary: Generate summary Excel report and download file
+ *     tags:
+ *       - Summary Report
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *               - batch_name
+ *               - serial_no
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-11-01 00:00:00"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-12-01 23:59:59"
+ *               batch_name:
+ *                 type: string
+ *                 example: "CLEANOUT"
+ *               serial_no:
+ *                 type: integer
+ *                 example: 2042
  *     responses:
  *       200:
- *         description: Summary Excel Report generated successfully
+ *         description: Excel file download
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Missing required fields
+ *       500:
+ *         description: Internal server error
  */
+
+
 
 /**
  * @swagger

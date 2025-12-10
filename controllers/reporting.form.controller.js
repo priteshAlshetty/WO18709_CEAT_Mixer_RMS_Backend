@@ -60,13 +60,13 @@ async function getBatchReportQueryObj(params) {
     let queryObj;
 
     try {
-        const recipeId = params.recipeId;
-        const serialNo = params.serialNo;
-        const batchNo = params.batchNo;
+        const recipeId = params.recipeId || "all";
+        const serialNo = params.serialNo || "all";
+        const batchNo = params.batchNo || "all";
         const dttmFrom = params.dttmFrom;
         const dttmTo = params.dttmTo;
         // console.log("Parameters Received:", { recipeId, serialNo, batchNo, dttmFrom, dttmTo });
-        if (recipeId === "All") {
+        if (recipeId.toLowerCase() === "all") {
 
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
@@ -83,7 +83,7 @@ async function getBatchReportQueryObj(params) {
                 return rows;
             }
         }
-        else if (serialNo === "All") {
+        else if (serialNo.toLowerCase() === "all") {
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
                 FROM report_batch_details
@@ -100,7 +100,7 @@ async function getBatchReportQueryObj(params) {
             }
 
         }
-        else if (batchNo === "All") {
+        else if (batchNo.toLowerCase() === "all") {
 
             const [rows] = await db.query(`
                 SELECT DISTINCT serial_no, batch_no, recipe_id
