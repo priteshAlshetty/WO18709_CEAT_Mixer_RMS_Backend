@@ -11,7 +11,7 @@ const {
     getRecipeIdsBtDateTime,
     getSerialByBatchFromSummary,
 } = require('../controllers/summary.controller.js');
-
+const { getAlarmReport } = require('../controllers/alarmReport.controller.js');
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
@@ -69,8 +69,6 @@ router.post('/weighing/getExcelReport', async (req, res) => {
     }
 });
 
-
-
 router.post('/batch/getBatchName/bydate', async (req, res) => {
     try {
         const requestData = req.body;
@@ -100,7 +98,6 @@ router.post('/batch/getBatchName/bydate', async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
-
 
 router.post('/batch/getSerial/byBatchName', async (req, res) => {
     try {
@@ -138,7 +135,6 @@ router.post('/batch/getSerial/byBatchName', async (req, res) => {
     }
 });
 
-
 router.post('/batch/getbatchNo/bySerialNo', async (req, res) => {
     try {
         const requestData = req.body;
@@ -167,10 +163,6 @@ router.post('/batch/getbatchNo/bySerialNo', async (req, res) => {
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
-
-
-
-
 
 router.post('/batch/getExcelReport', async (req, res) => {
     try {
@@ -262,8 +254,6 @@ router.post('/summary/getSerial/byBatchName', async (req, res) => {
     }
 })
 
-
-
 router.post('/summary/getExcelReport', async (req, res) => {
     let requestData = await req.body;
     const { from, to, batch_name, serial_no } = requestData;
@@ -293,7 +283,7 @@ router.post('/summary/getExcelReport', async (req, res) => {
     }
 })
 
-
+//-------------cleanout report---------------------------------//
 
 router.post('/cleanoutReport/byDate', async (req, res) => {
 
@@ -350,6 +340,8 @@ router.post('/cleanoutReport/byDate', async (req, res) => {
 
 })
 
+//-------shift plan
+
 router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
     const { from, to } = req.body;
 
@@ -404,6 +396,8 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
     }
 });
 
+//------production
+
 router.post('/production/getExcelReport/complete', async (req, res) => {
     const { from, to } = req.body;
 
@@ -416,7 +410,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         const result = await getProductionReport({ from, to });
 
         // ⛔ Case 1: No data found
-        if (result.status === false && result.code === "NO_DATA") {
+        if (result.status === false && result.error.code === "NO_DATA") {
             return res.status(404).json({
                 message: "No production data found for the selected date range"
             });
@@ -453,6 +447,68 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         return res.status(500).json({
             message: "ERR: Internal Server Error",
             errLoc: "At try catch block of route /production/getExcelReport/complete",
+            error: error.message
+        });
+    }
+});
+
+
+//---alarmReport
+
+router.post('/alarmReport', async (req, res) => {
+    try {
+        const { from, to } = req.body;
+
+        // Validate params
+        if (!from || !to) {
+            return res.status(400).json({
+                message: "Missing required parameters 'from' or 'to'."
+            });
+        }
+
+        // Call service
+        const result = await getAlarmReport({ from, to });
+
+        if (!result.status) {
+            // Handle service failure
+            return res.status(500).json({
+                message: "Failed to generate alarm report",
+                details: result.message || null
+            });
+        }
+
+        const reportPath = result.filePath;
+
+        // Check if file exists
+        if (!fs.existsSync(reportPath)) {
+            console.error("❌ Report file does not exist:", reportPath);
+            return res.status(500).json({
+                message: "Generated report file not found"
+            });
+        }
+
+        // Send file
+        const downloadName = `AlarmReport.xlsx`;
+
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error sending file:", err);
+
+                // Cannot send new headers if response already started
+                if (!res.headersSent) {
+                    return res.status(500).json({
+                        message: "Error sending file",
+                        error: err.message
+                    });
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("🔥 Fatal Error in /alarmReport:", error);
+        return res.status(500).json({
+            message: "ERR: Internal Server Error",
+            errLoc: "At try-catch block of route /alarmReport",
             error: error.message
         });
     }

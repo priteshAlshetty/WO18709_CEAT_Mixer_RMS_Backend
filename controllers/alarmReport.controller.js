@@ -2,6 +2,7 @@ const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
+const { exceptions } = require("winston");
 
 async function getAlarmReport(params) {
     try {
@@ -30,7 +31,7 @@ async function getAlarmReport(params) {
             { header: "Batch No", key: "batch_no", width: 15 },
             { header: "Serial No", key: "sr_no", width: 30 },
             { header: "Alarm Text", key: "alarm_text", width: 10 },
-
+            { header: "login", key: "login", width: 10 },
         ];
         // Add rows to the sheet
         rows.forEach((row) => {
@@ -42,7 +43,7 @@ async function getAlarmReport(params) {
                 batch_no: row.batch_no,
                 sr_no: row.sr_no,
                 alarm_text: row.alarm_text,
-                acknowledged_at: row.acknowledged_at,
+                login: row.current_login,
             });
         });
 
@@ -86,7 +87,7 @@ async function getAlarmReport(params) {
             to: 'G3'
         }
         // STEP 3 → Save Workbook to a file
-        const dir = path.join(__dirname, "reports", "Alarms_reports");
+        const dir = path.join(__dirname, "..", "reports", "Alarms_reports");
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
@@ -94,10 +95,17 @@ async function getAlarmReport(params) {
         const filePath = path.join(dir, fileName);
         await workbook.xlsx.writeFile(filePath);
 
-        return filePath;
+        return {
+            status: true,
+            filePath
+        };
     } catch (error) {
         return ({
             status: false, error, path: null
         });
     }
+}
+
+module.exports = {
+    getAlarmReport
 }
