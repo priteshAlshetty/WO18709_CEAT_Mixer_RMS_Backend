@@ -180,7 +180,9 @@ async function generateDowntimeReport(params) {
         // Save report
         const dir = path.join(__dirname, "..", "reports", "downtime");
 
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
 
         const fileName = path.join(dir, "downtime_report.xlsx");
 

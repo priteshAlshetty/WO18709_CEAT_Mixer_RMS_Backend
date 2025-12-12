@@ -335,7 +335,7 @@ async function generateSummaryExcelReport(params) {
         const reportsDir = path.join(__dirname, "..", "reports", "summary");
         // Ensure reports directory exists
         if (!fs.existsSync(reportsDir)) {
-            fs.mkdirSync(reportsDir);
+            fs.mkdirSync(reportsDir, { recursive: true });
         }
         const filePath = path.join(reportsDir, `Production_Report_${new Date().toISOString().split("T")[0]}.xlsx`);
         await workbook.xlsx.writeFile(filePath);
