@@ -470,7 +470,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
 
 //---alarmReport
 
-router.post('/alarmReport', async (req, res) => {
+router.post('/alarm/generateReport', async (req, res) => {
     try {
         const { from, to } = req.body;
 
