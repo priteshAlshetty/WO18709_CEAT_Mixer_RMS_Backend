@@ -339,7 +339,6 @@ router.post('/cleanoutReport/byDate', async (req, res) => {
     }
 
 })
-
 //-------shift plan
 
 router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
@@ -395,7 +394,6 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
         });
     }
 });
-
 //------production
 
 
@@ -466,8 +464,6 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         });
     }
 });
-
-
 //---alarmReport
 
 router.post('/alarm/generateReport', async (req, res) => {

@@ -7,11 +7,11 @@ const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 
 async function getAlarmReport(params) {
     try {
-        const from = getMySQLTimestamp(params.from);
-        const to = getMySQLTimestamp(params.to);
+        // const from = getMySQLTimestamp(params.from);
+        // const to = getMySQLTimestamp(params.to);
 
         // STEP 1 → Query Data
-        const [rows] = await db.query(`SELECT * FROM report_alarm WHERE DTTM BETWEEN ? AND ? ORDER BY DTTM ASC`, [from, to]);
+        const [rows] = await db.query(`SELECT * FROM report_alarm WHERE DATE(DTTM) BETWEEN ? AND ? ORDER BY DTTM ASC`, [params.from, params.to]);
 
         if (rows.length === 0) {
             {

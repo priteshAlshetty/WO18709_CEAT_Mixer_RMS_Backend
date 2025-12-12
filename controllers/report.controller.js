@@ -409,6 +409,7 @@ async function generateExcelMaterialReport(params) {
         // STEP 1 → Query Data
         const [rows] = await db.query(
             `SELECT 
+                recipe_id,
                 material_type,
                 material_code,
                 ROUND(SUM(act_wt),3) AS total_act_wt
@@ -436,6 +437,8 @@ async function generateExcelMaterialReport(params) {
         const sheet = workbook.addWorksheet("Material Report");
 
         sheet.columns = [
+
+            { header: "recipe_id", key: "recipe_id", width: 30 },
             { header: "Material Type", key: "material_type", width: 30 },
             { header: "Material Code", key: "material_code", width: 20 },
             { header: "Total Actual Weight (Kg)", key: "total_act_wt", width: 25 }
@@ -444,19 +447,13 @@ async function generateExcelMaterialReport(params) {
         // Header rows
         sheet.insertRow(1, ["CEAT LIMITED AMBARNATH : MIXER 1"]);
         sheet.insertRow(2, [`Material Report from ${params.from} to ${params.to}`]);
-        sheet.mergeCells("A1:C1");
-        sheet.mergeCells("A2:C2");
+        sheet.mergeCells("A1:D1");
+        sheet.mergeCells("A2:D2");
 
         // Header styling
         sheet.getCell("A1").font = { bold: true, size: 16 };
         sheet.getCell("A1").alignment = { horizontal: "center", vertical: "middle" };
         sheet.getCell("A1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD6F7FF" } };
-        sheet.getCell("A1").border = {
-            top: { style: "thick" },
-            left: { style: "thick" },
-            right: { style: "thick" },
-            bottom: { style: "thick" }
-        };
 
         sheet.getCell("A2").font = { bold: true, size: 12 };
         sheet.getCell("A2").alignment = { horizontal: "center", vertical: "middle" };
