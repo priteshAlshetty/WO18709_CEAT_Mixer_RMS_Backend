@@ -90,7 +90,7 @@ router.post('/addDowntime', async (req, res) => {
 
 
 });
-router.post('/generateDowntimeReport', async (req, res) => {
+router.post('/generateReport', async (req, res) => {
     try {
         const params = req.body;
         const { from, to } = params;
@@ -122,7 +122,7 @@ router.post('/generateDowntimeReport', async (req, res) => {
         }
 
     } catch (error) {
-        console.error("🔥 Error in /downtime/generateDowntimeReport", error);
+        console.error("🔥 Error in /downtime/generateReport", error);
         return res.status(500).json({ message: error.message || "Internal Server Error", error });
     }
 });
