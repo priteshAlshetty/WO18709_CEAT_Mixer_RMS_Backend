@@ -44,9 +44,6 @@ async function getProductionData(params) {
         return ({ status: true, data: rows });
     } catch (error) {
         return ({ status: false, error });
-    } finally {
-        // close db connection
-        await db.end();
     }
 
 }
