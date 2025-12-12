@@ -398,59 +398,6 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
 
 //------production
 
-// router.post('/production/getExcelReport/complete', async (req, res) => {
-//     const { from, to } = req.body;
-
-//     if (!from || !to) {
-//         return res.status(400).json({ message: "Missing 'from' or 'to' date" });
-//     }
-
-//     try {
-//         // ⬅ generateProductionReport returns { status, filePath }
-//         const result = await getProductionReport({ from, to });
-
-//         // ⛔ Case 1: No data found
-//         if (result.status === false && result.error.code === "NO_DATA") {
-//             return res.status(404).json({
-//                 message: "No production data found for the selected date range"
-//             });
-//         }
-
-//         // ⛔ Should never happen, but just in case
-//         if (!result.filePath) {
-//             return res.status(500).json({ message: "Report path missing" });
-//         }
-
-//         const reportPath = result.filePath;
-
-//         // ⛔ Case 2: File missing on disk
-//         if (!fs.existsSync(reportPath)) {
-//             console.error("❌ Report file does not exist:", reportPath);
-//             return res.status(500).json({ message: "Generated report file not found" });
-//         }
-
-//         // 🟢 Case 3: All good → Send Excel file
-//         const downloadName = `ProductionReport_${from}_to_${to}.xlsx`;
-
-//         return res.download(reportPath, downloadName, (err) => {
-//             if (err) {
-//                 console.error("❌ Error sending file:", err);
-//                 return res.status(500).json({
-//                     message: "Error sending file",
-//                     error: err.message
-//                 });
-//             }
-//         });
-
-//     } catch (error) {
-//         console.error("🔥 Fatal Error in /production/getExcelReport/complete:", error);
-//         return res.status(500).json({
-//             message: "ERR: Internal Server Error",
-//             errLoc: "At try catch block of route /production/getExcelReport/complete",
-//             error: error.message
-//         });
-//     }
-// });
 
 router.post('/production/getExcelReport/complete', async (req, res) => {
     const { from, to } = req.body;
@@ -467,7 +414,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         // NO DATA CONDITION
         if (!result?.status && result?.error?.code === "NO_DATA") {
             console.warn("⚠ No data found:", { from, to });
-            return res.status(404).json({
+            return res.status(402).json({
                 message: "No production data found for the selected date range"
             });
         }
