@@ -1184,3 +1184,44 @@
  *       500:
  *         description: Internal server error
  */
+
+
+/**
+ * @swagger
+ * /report/alarm/generateReport:
+ *   post:
+ *     summary: Generate an Excel report for alarms within a datetime range
+ *     tags:
+ *       - Alarms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-10T00:00:00Z"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2025-02-12T23:59:59Z"
+ *     responses:
+ *       200:
+ *         description: Excel report generated successfully
+ *         content:
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Missing required date range
+ *       500:
+ *         description: Internal server error
+ */
+

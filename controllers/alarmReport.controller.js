@@ -3,11 +3,15 @@ const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 const { exceptions } = require("winston");
+const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 
 async function getAlarmReport(params) {
     try {
+        const from = getMySQLTimestamp(params.from);
+        const to = getMySQLTimestamp(params.to);
+
         // STEP 1 → Query Data
-        const [rows] = await db.query(`SELECT * FROM report_alarm WHERE DATE(DTTM) BETWEEN ? AND ? ORDER BY DTTM ASC`, [params.from, params.to]);
+        const [rows] = await db.query(`SELECT * FROM report_alarm WHERE DTTM BETWEEN ? AND ? ORDER BY DTTM ASC`, [from, to]);
 
         if (rows.length === 0) {
             {
@@ -91,7 +95,7 @@ async function getAlarmReport(params) {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
-        const fileName = `AlarmReport_${params.from}_to_${params.to}.xlsx`;
+        const fileName = `AlarmReport.xlsx`;
         const filePath = path.join(dir, fileName);
         await workbook.xlsx.writeFile(filePath);
 
