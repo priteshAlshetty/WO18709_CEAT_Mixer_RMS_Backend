@@ -20,30 +20,32 @@ router.post('/weighing/getExcelReport', async (req, res) => {
     const { from, to } = req.body;
 
     if (!from || !to) {
+        console.error(" Missing required fields:", { from, to });
         return res.status(400).json({ message: "Missing 'from' or 'to' date" });
     }
 
     try {
-        // ⬅ generateExcelMaterialReport returns { status, filePath }
         const result = await generateExcelMaterialReport({ from, to });
 
-        // ⛔ Case 1: No data found
-        if (result.status === false && result.code === "NO_DATA") {
-            return res.status(404).json({
+        // Case 1: No data found
+        if (!result?.status && result?.error?.code === "NO_DATA") {
+            console.warn("⚠ No data found:", { from, to });
+            return res.status(402).json({
                 message: "No material weighing data found for the selected date range"
             });
         }
 
-        // ⛔ Should never happen, but just in case
-        if (!result.filePath) {
-            return res.status(500).json({ message: "Report path missing" });
+        // Case 2: Should never happen, but just in case
+        if (!result?.filePath) {
+            console.error("Report generation failed: filePath missing", result);
+            return res.status(501).json({ message: "Report path missing" });
         }
 
         const reportPath = result.filePath;
 
-        // ⛔ Case 2: File missing on disk
+        //  Case 3: File missing on disk
         if (!fs.existsSync(reportPath)) {
-            console.error("❌ Report file does not exist:", reportPath);
+            console.error(" Report file does not exist:", reportPath);
             return res.status(500).json({ message: "Generated report file not found" });
         }
 
@@ -52,13 +54,16 @@ router.post('/weighing/getExcelReport', async (req, res) => {
 
         return res.download(reportPath, downloadName, (err) => {
             if (err) {
-                console.error("❌ Error sending file:", err);
-                return res.status(500).json({
-                    message: "Error sending file",
-                    error: err.message
-                });
+                console.error(" Error sending file:", err);
+                if (!res.headersSent) {
+                    res.status(500).json({
+                        message: "Error sending report",
+                        error: err.message
+                    });
+                }
             }
         });
+
 
     } catch (error) {
         console.error("🔥 Fatal Error in /weighing/getExcelReport:", error);
@@ -420,7 +425,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         // Missing filePath (unexpected)
         if (!result?.filePath) {
             console.error("Report generation failed: filePath missing", result);
-            return res.status(500).json({ message: "Report path missing" });
+            return res.status(501).json({ message: "Report path missing" });
         }
 
         const reportPath = result.filePath;
@@ -436,7 +441,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
         // SUCCESS → Send Excel file
         const downloadName = `ProductionReport_${from}_to_${to}.xlsx`;
 
-        res.download(reportPath, downloadName, async (err) => {
+        return res.download(reportPath, downloadName, async (err) => {
             if (err) {
                 console.error(" Error sending report:", err);
                 if (!res.headersSent) {

@@ -2,6 +2,7 @@ const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
+const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 
 // batch report generation function
 
@@ -406,6 +407,8 @@ async function generateExcelBatchReport(params) {
 
 async function generateExcelMaterialReport(params) {
     try {
+        const from = getMySQLTimestamp(params.from);
+        const to = getMySQLTimestamp(params.to);
         // STEP 1 → Query Data
         const [rows] = await db.query(
             `SELECT 
@@ -417,7 +420,7 @@ async function generateExcelMaterialReport(params) {
             WHERE DTTM BETWEEN ? AND ?
             GROUP BY material_type, material_code
             ORDER BY material_type;`,
-            [params.from, params.to]
+            [from, to]
         );
 
         if (rows.length === 0) {
