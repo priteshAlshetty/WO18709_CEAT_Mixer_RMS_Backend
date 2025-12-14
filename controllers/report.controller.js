@@ -407,8 +407,10 @@ async function generateExcelBatchReport(params) {
 
 async function generateExcelMaterialReport(params) {
     try {
+        console.log("params :", params)
         const from = getMySQLTimestamp(params.from);
         const to = getMySQLTimestamp(params.to);
+        console.log("\n from:", from, "  to:", to);
         // STEP 1 → Query Data
         const [rows] = await db.query(
             `SELECT 
