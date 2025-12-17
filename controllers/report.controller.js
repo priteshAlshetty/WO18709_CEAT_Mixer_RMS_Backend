@@ -408,9 +408,9 @@ async function generateExcelBatchReport(params) {
 async function generateExcelMaterialReport(params) {
     try {
         console.log("params :", params)
-        const from = getMySQLTimestamp(params.from);
-        const to = getMySQLTimestamp(params.to);
-        console.log("\n from:", from, "  to:", to);
+        // const from = getMySQLTimestamp(params.from);
+        // const to = getMySQLTimestamp(params.to);
+        // console.log("\n from:", from, "  to:", to);
         // STEP 1 → Query Data
         const [rows] = await db.query(
             `SELECT 
@@ -419,10 +419,10 @@ async function generateExcelMaterialReport(params) {
                 material_code,
                 ROUND(SUM(act_wt),3) AS total_act_wt
             FROM report_material_log
-            WHERE DTTM BETWEEN ? AND ?
+            WHERE DATE(DTTM) BETWEEN ? AND ?
             GROUP BY material_type, material_code
             ORDER BY material_type;`,
-            [from, to]
+            [params.from, params.to]
         );
 
         if (rows.length === 0) {
@@ -478,6 +478,12 @@ async function generateExcelMaterialReport(params) {
                 };
             });
         });
+
+        // ✅ Apply autofilter (A1:D1)
+        sheet.autoFilter = {
+            from: 'A3',
+            to: 'D3'
+        };
 
         // STEP 3 → Create folder if not exists
         const dir = path.join(__dirname, "reports", "material_report");
