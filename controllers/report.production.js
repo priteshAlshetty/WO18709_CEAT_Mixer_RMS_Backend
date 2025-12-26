@@ -9,7 +9,7 @@ async function getProductionData(params) {
         //STEP 1 → Query Data
         const [rows] = await db.query(/* sql */
             `
-            SELECT DATE_FORMAT(DTTM, '%Y-%m-%d') AS DTTM ,recipe_id, serial_no, set_batch, batch_no, start_time, stop_time,user_name, TIME(start_time) AS start_time_only, TIME(stop_time) AS stop_time_only
+            SELECT DATE_FORMAT(DTTM, '%Y-%m-%d') AS DTTM ,recipe_id, serial_no, set_batch, batch_no, start_time, stop_time,operator, TIME(start_time) AS start_time_only, TIME(stop_time) AS stop_time_only
             FROM report_production
             WHERE DATE(DTTM) BETWEEN ? AND ?
             ORDER BY serial_no, recipe_id, batch_no;
@@ -91,7 +91,7 @@ async function getProductionReport(params) {
                 stop_time: row.stop_time_only,
                 cycle_time: row.cycle_time,
                 bwb_time: row.bwb_time,
-                user_name: row.user_name,
+                user_name: row.operator,
             });
         });
 
