@@ -11,7 +11,8 @@ async function generateBatchReport({ batch_details, weighing_details, mixing_det
     // const workbook = new ExcelJS.Workbook();
     // const sr_no = batch_details.serial_no;
     // const batch_no = batch_details.batch_no;
-    const sheet = workbook.addWorksheet(sheetname || 'sheet1');
+    // const sheet = workbook.addWorksheet(sheetname || 'sheet1');
+    const sheet = workbook.addWorksheet();
 
 
     // -------------------------------
@@ -408,8 +409,8 @@ async function generateExcelBatchReport(params) {
 async function generateExcelMaterialReport(params) {
     try {
         console.log("params :", params)
-        // const from = getMySQLTimestamp(params.from);
-        // const to = getMySQLTimestamp(params.to);
+        const from = getMySQLTimestamp(params.from);
+        const to = getMySQLTimestamp(params.to);
         // console.log("\n from:", from, "  to:", to);
         // STEP 1 → Query Data
         const [rows] = await db.query(
@@ -419,10 +420,10 @@ async function generateExcelMaterialReport(params) {
                 material_code,
                 ROUND(SUM(act_wt),3) AS total_act_wt
             FROM report_material_log
-            WHERE DATE(DTTM) BETWEEN ? AND ?
+            WHERE DTTM BETWEEN ? AND ?
             GROUP BY material_type, material_code
             ORDER BY material_type;`,
-            [params.from, params.to]
+            [from, to]
         );
 
         if (rows.length === 0) {
