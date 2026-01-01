@@ -1225,3 +1225,324 @@
  *         description: Internal server error
  */
 
+/**
+ * @swagger
+ * /graph/getRecipeIdByDate:
+ *   post:
+ *     summary: Get recipe IDs available within a date range
+ *     description: |
+ *       Returns a list of distinct recipe IDs logged between the given
+ *       date-time range.  
+ *       The request is considered valid even if no data is found.
+ *
+ *     tags:
+ *       - Graph
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-01-01T02:30:10.000Z"
+ *                 description: Start date-time UTC 
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-01-02T02:30:10.000Z"
+ *                 description: End date-time UTC 
+ *
+ *     responses:
+ *       200:
+ *         description: Valid request processed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: true
+ *                     data:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["MT0112", "MT0113"]
+ *                 - type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: false
+ *                     error:
+ *                       type: string
+ *                       example: "NO_DATA"
+ *
+ *       400:
+ *         description: Missing required request parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "FROM_AND_TO_REQUIRED"
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: "INTERNAL_SERVER_ERROR"
+ */
+
+/**
+ * @swagger
+ * /graph/getSrNoByRecipeId:
+ *   post:
+ *     summary: Get SR numbers for a recipe within a date range
+ *     description: |
+ *       Returns all serial numbers (sr_no) associated with a given recipe ID
+ *       within the specified date range.
+ *
+ *     tags:
+ *       - Graph
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *               - recipe_id
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-01-01T02:30:10.000Z"
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2026-01-02T02:30:10.000Z"
+ *               recipe_id:
+ *                 type: string
+ *                 example: "MT0112"
+ *
+ *     responses:
+ *       200:
+ *         description: Valid request processed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   oneOf:
+ *                     - type: object
+ *                       properties:
+ *                         status:
+ *                           type: boolean
+ *                           example: true
+ *                         data:
+ *                           type: array
+ *                           items:
+ *                             type: integer
+ *                           example: [1558, 1559]
+ *                     - type: object
+ *                       properties:
+ *                         status:
+ *                           type: boolean
+ *                           example: false
+ *                         error:
+ *                           type: string
+ *                           example: "NO_DATA"
+ *
+ *       400:
+ *         description: Missing required request parameters
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /graph/getBatchCountBySrno:
+ *   post:
+ *     summary: Get batch count for a given SR number
+ *     description: |
+ *       Returns the total number of batches recorded for a given
+ *       recipe ID and serial number within the specified date range.
+ *
+ *     tags:
+ *       - Graph
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *               - recipe_id
+ *               - sr_no
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *               recipe_id:
+ *                 type: string
+ *                 example: "MT0112"
+ *               sr_no:
+ *                 type: integer
+ *                 example: 1558
+ *
+ *     responses:
+ *       200:
+ *         description: Batch count retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: true
+ *                     batch_count:
+ *                       type: integer
+ *                       example: 7
+ *
+ *       400:
+ *         description: Missing required parameters
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /graph/getGraphDataByBatchNo:
+ *   post:
+ *     summary: Get graph data for a specific batch
+ *     description: |
+ *       Returns time-series graph data (temperature, power, energy, pressure,
+ *       RPM, ram position, digital flags) for a given batch number.
+ *
+ *     tags:
+ *       - Graph
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - from
+ *               - to
+ *               - recipe_id
+ *               - sr_no
+ *               - batch_no
+ *             properties:
+ *               from:
+ *                 type: string
+ *                 format: date-time
+ *               to:
+ *                 type: string
+ *                 format: date-time
+ *               recipe_id:
+ *                 type: string
+ *                 example: "MT0112"
+ *               sr_no:
+ *                 type: integer
+ *                 example: 1558
+ *               batch_no:
+ *                 type: integer
+ *                 example: 3
+ *
+ *     responses:
+ *       200:
+ *         description: Graph data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 result:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: boolean
+ *                       example: true
+ *                     meta:
+ *                       type: object
+ *                       properties:
+ *                         begin_time:
+ *                           type: string
+ *                           example: "2026-01-01T02:30:10.000Z"
+ *                         end_time:
+ *                           type: string
+ *                           example: "2026-01-02T02:30:10.000Z"
+ *                     graphData:
+ *                       type: object
+ *                       properties:
+ *                         temp:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         power:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         energy:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         pressure:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         rpm:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         ram_position:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                         DD_Open:
+ *                           type: array
+ *                           items:
+ *                             type: integer
+ *
+ *       400:
+ *         description: Missing required parameters
+ *       500:
+ *         description: Internal server error
+ */

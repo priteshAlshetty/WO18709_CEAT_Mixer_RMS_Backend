@@ -7,6 +7,7 @@ const materialRoutes = require('./routes/material.routes.js');
 const reportRoutes = require('./routes/report.routes.js');
 const downtimeRoutes = require('./routes/downtime.route.js');
 const loggingMiddleware = require('./middleware/middleware.logger.js');
+const graphs = require('./routes/graph.route.js');
 const myData = require("./recipe_structure.json");
 const logger = require('./config/config.logger.js');
 const recipeFormat = require('./recipe_final.json')
@@ -35,6 +36,9 @@ app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
 app.use('/report', reportRoutes);
 app.use('/downtime', downtimeRoutes);
+app.use('/graph', graphs);
+
+
 // Global error handling middleware
 app.use((err, req, res, next) => {
     logger.error({
