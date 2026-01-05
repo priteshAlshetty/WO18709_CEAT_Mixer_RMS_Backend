@@ -421,7 +421,7 @@ async function generateExcelMaterialReport(params) {
                 ROUND(SUM(act_wt),3) AS total_act_wt
             FROM report_material_log
             WHERE DTTM BETWEEN ? AND ?
-            GROUP BY material_type, material_code
+            GROUP BY recipe_id,material_type, material_code
             ORDER BY material_type;`,
             [from, to]
         );
@@ -452,7 +452,8 @@ async function generateExcelMaterialReport(params) {
 
         // Header rows
         sheet.insertRow(1, ["CEAT LIMITED AMBARNATH : MIXER 1"]);
-        sheet.insertRow(2, [`Material Report from ${params.from} to ${params.to}`]);
+        const title = `Material Report from ${String(from)} to ${String(to)}`;
+        sheet.insertRow(2, [title]);
         sheet.mergeCells("A1:D1");
         sheet.mergeCells("A2:D2");
 
