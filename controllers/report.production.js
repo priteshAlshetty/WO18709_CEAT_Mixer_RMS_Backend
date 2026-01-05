@@ -1,9 +1,9 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 
-async function getProductionData(params) {
+async function getProductionData(params, db) {
 
     try {
         //STEP 1 → Query Data
@@ -48,10 +48,10 @@ async function getProductionData(params) {
 
 }
 
-async function getProductionReport(params) {
+async function getProductionReport(params, db) {
     try {
         //get data
-        const result = await getProductionData(params);
+        const result = await getProductionData(params, db);
         if (!result.status) {
             throw result.error;
         }

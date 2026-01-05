@@ -1,11 +1,11 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 const { get } = require("http");
 
-async function getDowntime(params) {
+async function getDowntime(params, db) {
     const from = getMySQLTimestamp(new Date(params.from));
     const to = getMySQLTimestamp(new Date(params.to));
     try {
@@ -35,7 +35,7 @@ async function getDowntime(params) {
     }
 
 }
-async function updateDowntime(params) {
+async function updateDowntime(params, db) {
     try {
         const downtime_data = params.downtime_data;
         let lastResult = null;
@@ -71,7 +71,7 @@ async function updateDowntime(params) {
     }
 }
 
-async function deleteDowntime(params) {
+async function deleteDowntime(params, db) {
     try {
         const sr = params.sr;
         const [result] = await db.query(
@@ -90,7 +90,7 @@ async function deleteDowntime(params) {
 
 }
 
-async function addDowntime(params) {
+async function addDowntime(params, db) {
     try {
 
         const downtime_start = getMySQLTimestamp(new Date(params.downtime_start));
@@ -107,7 +107,7 @@ async function addDowntime(params) {
     }
 }
 
-async function generateDowntimeReport(params) {
+async function generateDowntimeReport(params, db) {
     try {
         const result = await getDowntime(params);
         if (!result.status) {

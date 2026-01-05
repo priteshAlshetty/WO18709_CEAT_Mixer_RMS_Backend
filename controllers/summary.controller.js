@@ -1,4 +1,4 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const { getBatchReportQueryObj } = require("./reporting.form.controller.js")
 const { getBatchDetails } = require("./report.controller.js");
 const path = require("path");
@@ -9,7 +9,7 @@ const { get } = require("http");
 
 // dropdown forms controllers
 
-async function getRecipeIdsBtDateTime(params) {
+async function getRecipeIdsBtDateTime(params, db) {
     const [row] = await db.query(`
     SELECT DISTINCT recipe_id AS BATCH_NAME
     FROM report_batch_details
@@ -21,7 +21,7 @@ async function getRecipeIdsBtDateTime(params) {
     return row.map(item => item.BATCH_NAME);
 }
 
-async function getSerialByBatchFromSummary(params) {
+async function getSerialByBatchFromSummary(params, db) {
     if (!params.batch_name || params.batch_name.toLowerCase() === "all") {
         const [rows] = await db.query(`
             SELECT DISTINCT serial_no AS SERIAL_NO
@@ -52,7 +52,7 @@ async function getSerialByBatchFromSummary(params) {
 
 }
 // summary data controllers
-async function getMatrialByBatchNo(params) {
+async function getMatrialByBatchNo(params, db) {
 
     try {
         // STEP 1 → Query Data
@@ -104,9 +104,9 @@ async function getMatrialByBatchNo(params) {
     }
 }
 
-async function getSummaryData(params) {
+async function getSummaryData(params, db) {
     try {
-        const queryObj = await getBatchReportQueryObj(params);
+        const queryObj = await getBatchReportQueryObj(params, db);
         // console.log("Query Object:", queryObj);
         // this is missing now
 
@@ -149,9 +149,9 @@ async function getSummaryData(params) {
 
 //summary excel report controllers
 
-async function generateSummaryExcelReport(params) {
+async function generateSummaryExcelReport(params, db) {
     try {
-        const summaryData = await getSummaryData(params);
+        const summaryData = await getSummaryData(params, db);
         // console.log("Summary Data :", summaryData);
         const workbook = new ExcelJS.Workbook();
         workbook.creator = "CEAT Mixer RMS";

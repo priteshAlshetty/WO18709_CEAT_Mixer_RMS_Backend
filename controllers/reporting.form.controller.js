@@ -1,8 +1,8 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const { generateExcelBatchReport } = require("./report.controller.js");
 const path = require("path");
 
-async function getBatchNameByDate(from, to) {
+async function getBatchNameByDate(from, to, db) {
     const query = `SELECT DISTINCT recipe_id AS BATCH_NAME
                     FROM report_batch_details
                     WHERE DATE(DTTM) BETWEEN ? AND ? `;
@@ -15,7 +15,7 @@ async function getBatchNameByDate(from, to) {
     }
 }
 
-async function getSerialByBatchName(batchName, from, to) {
+async function getSerialByBatchName(batchName, from, to, db) {
     console.log("Fetching serial numbers for batch name:", batchName, "from", from, "to", to);
     batchName = String(batchName || "").trim().toLowerCase();
 
@@ -43,7 +43,7 @@ async function getSerialByBatchName(batchName, from, to) {
     }
 }
 
-async function getBatchNoBySerialNo(serialNo) {
+async function getBatchNoBySerialNo(serialNo, db) {
     const query = `SELECT DISTINCT batch_no AS BATCH_NO
                     FROM report_batch_details
                     WHERE serial_no = ? `;
@@ -56,7 +56,7 @@ async function getBatchNoBySerialNo(serialNo) {
     }
 }
 
-async function getBatchReportQueryObj(params) {
+async function getBatchReportQueryObj(params, db) {
     let queryObj;
 
     try {
@@ -136,11 +136,11 @@ async function getBatchReportQueryObj(params) {
     // return {queryObj, reportPath};
 }
 
-async function getExcelBatchReport(obj) {
+async function getExcelBatchReport(obj, db) {
     try {
-        const queryObj = await getBatchReportQueryObj(obj);
+        const queryObj = await getBatchReportQueryObj(obj, db);
         console.log("Query Object:", queryObj);
-        const reportFilePath = await generateExcelBatchReport(queryObj);
+        const reportFilePath = await generateExcelBatchReport(queryObj, db);
         if (!reportFilePath) {
             throw new Error("Failed to generate report");
         }

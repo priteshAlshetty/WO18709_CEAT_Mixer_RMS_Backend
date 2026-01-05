@@ -1,11 +1,11 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 
 
 
-async function getSummeryData(params) {
+async function getSummeryData(params, db) {
 
     try {
         //STEP 1 → Query Data
@@ -14,7 +14,7 @@ async function getSummeryData(params) {
     }
 }
 
-async function getMaterialData(params) {
+async function getMaterialData(params, db) {
     try {
 
         const [rows] = await db.query(/* sql */
@@ -70,6 +70,6 @@ async function getMaterialData(params) {
 
 }
 
-getMaterialData({ recipe_id: "ML611", serial_no: 2049, batch_no: 15 }).then(result => {
-    console.dir(result, { depth: null, colors: true });
-});
+// getMaterialData({ recipe_id: "ML611", serial_no: 2049, batch_no: 15 }).then(result => {
+//     console.dir(result, { depth: null, colors: true });
+// });

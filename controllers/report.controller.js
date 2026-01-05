@@ -1,4 +1,4 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
@@ -6,7 +6,7 @@ const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 
 // batch report generation function
 
-async function generateBatchReport({ batch_details, weighing_details, mixing_details }, workbook, sheetname) {
+async function generateBatchReport({ batch_details, weighing_details, mixing_details }, workbook, sheetname, db) {
 
     // const workbook = new ExcelJS.Workbook();
     // const sr_no = batch_details.serial_no;
@@ -306,7 +306,7 @@ async function generateBatchReport({ batch_details, weighing_details, mixing_det
     // return workbook;
 }
 
-async function getBatchDetails(params) {
+async function getBatchDetails(params, db) {
 
     const [batch_details] = await db.query(
         /* sql */`SELECT 
@@ -326,7 +326,7 @@ async function getBatchDetails(params) {
     }
 }
 
-async function getWeighingDetails(params) {
+async function getWeighingDetails(params, db) {
     const [batch_details] = await db.query(
         /* sql */`SELECT  
         material_type,material_code,  set_wt, act_wt 
@@ -343,7 +343,7 @@ async function getWeighingDetails(params) {
 
 }
 
-async function getMixingDetails(params) {
+async function getMixingDetails(params, db) {
 
     const [mixing_details] = await db.query(/*sql*/ `
         SELECT
@@ -358,7 +358,7 @@ async function getMixingDetails(params) {
     }
 }
 
-async function generateExcelBatchReport(params) {
+async function generateExcelBatchReport(params, db) {
 
     // Create ONE workbook for all reports
     const workbook = new ExcelJS.Workbook();
@@ -406,7 +406,7 @@ async function generateExcelBatchReport(params) {
     return fileName;
 }
 
-async function generateExcelMaterialReport(params) {
+async function generateExcelMaterialReport(params, db) {
     try {
         console.log("params :", params)
         const from = getMySQLTimestamp(params.from);

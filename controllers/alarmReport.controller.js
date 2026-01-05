@@ -1,11 +1,11 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 const { exceptions } = require("winston");
 const { getMySQLTimestamp } = require("../utils/timestamp.helper.js");
 
-async function getAlarmReport(params) {
+async function getAlarmReport(params, db) {
     try {
         // const from = getMySQLTimestamp(params.from);
         // const to = getMySQLTimestamp(params.to);

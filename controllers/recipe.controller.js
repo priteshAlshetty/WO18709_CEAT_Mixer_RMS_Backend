@@ -1,4 +1,6 @@
-const db = require("../config/config.mysql.js");
+// const db = require("../config/config.mysql.js");
+// const dbMixer2RMS = require("../config/mixer2/mixer2.mysql.rms.js");
+// const dbMixer1RMS = require("../config/mixer1/mixer1.mysql.rms.js");
 const getMySQLTimestamp = require("../utils/timestamp.helper.js").getMySQLTimestamp;
 
 /**
@@ -19,11 +21,12 @@ const getMySQLTimestamp = require("../utils/timestamp.helper.js").getMySQLTimest
  * }
  */
 
-async function checkRecipeExists(recipe_id) {
-    const conn = await db.getConnection();
+async function checkRecipeExists(recipe_id, db) {
+
+
     try {
-        const [mixing] = await conn.query("SELECT COUNT(*) as count FROM recipe_mixing WHERE recipe_id = ?", [recipe_id]);
-        const [weighing] = await conn.query("SELECT COUNT(*) as count FROM recipe_weighing WHERE recipe_id = ?", [recipe_id]);
+        const [mixing] = await db.query("SELECT COUNT(*) as count FROM recipe_mixing WHERE recipe_id = ?", [recipe_id]);
+        const [weighing] = await db.query("SELECT COUNT(*) as count FROM recipe_weighing WHERE recipe_id = ?", [recipe_id]);
         return {
             mixingExists: mixing[0].count > 0,
             weighingExists: weighing[0].count > 0
@@ -32,8 +35,6 @@ async function checkRecipeExists(recipe_id) {
     } catch (error) {
         console.error("Error checking recipe existence:", error);
         throw error;
-    } finally {
-        conn.release();
     }
 }
 
@@ -68,11 +69,11 @@ async function checkRecipeExists(recipe_id) {
  *   console.error('Failed to get recipe:', error);
  * }
  */
-async function getRecipeById(recipeId) {
-    const conn = await db.getConnection();
+async function getRecipeById(recipeId, db) {
+
     try {
         let recipeFound;
-        const recipeExists = await checkRecipeExists(recipeId);
+        const recipeExists = await checkRecipeExists(recipeId, db);
 
         if (!recipeExists.mixingExists || !recipeExists.weighingExists) {
             recipeFound = false;
@@ -86,54 +87,54 @@ async function getRecipeById(recipeId) {
 
         recipeFound = true;
 
-        let [recipe_mixing] = await conn.query(
+        let [recipe_mixing] = await db.query(
             `SELECT mix_seq_no, mix_condition, mix_time, mix_temp, mix_power, mix_energy, mix_action, mix_pressure, mix_speed 
             FROM recipe_mixing WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        let [recipe_weighing] = await conn.query(
+        let [recipe_weighing] = await db.query(
             `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
             [recipeId]
         );
-// convert timestamps to string to avoid issues in frontend
+        // convert timestamps to string to avoid issues in frontend
 
         let timestampFields = recipe_weighing[0]['ModifyTime'];
-       
-        if (timestampFields){
+
+        if (timestampFields) {
             console.log("inside timestamp conversion", timestampFields);
-            recipe_weighing[0]['ModifyTime'] =  new Date(timestampFields).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+            recipe_weighing[0]['ModifyTime'] = new Date(timestampFields).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
         }
 
         if (recipe_weighing && 'Id' in recipe_weighing[0]) {
             delete recipe_weighing[0].Id;
         }
 
-        let [recipe_weight_CB] = await conn.query(
+        let [recipe_weight_CB] = await db.query(
             `SELECT CB_index, Act, CB_materialName, CB_materialCode, CB_set, CB_tol 
             FROM recipe_weight_cb WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        let [recipe_weight_poly] = await conn.query(
+        let [recipe_weight_poly] = await db.query(
             `SELECT POLY_index, sheet_filter, POLY_materialName, POLY_materialCode, POLY_set, POLY_tol 
             FROM recipe_weight_poly WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        let [recipe_weight_oil_a] = await conn.query(
+        let [recipe_weight_oil_a] = await db.query(
             `SELECT OIL_A_index, Act, OIL_A_materialName, OIL_A_materialCode, OIL_A_set, OIL_A_tol 
             FROM recipe_weight_oil_a WHERE recipe_id = ?`,
             [recipeId]
         );
 
-        let [recipe_weight_oil_b] = await conn.query(
+        let [recipe_weight_oil_b] = await db.query(
             `SELECT OIL_B_index, Act, OIL_B_materialName, OIL_B_materialCode, OIL_B_set, OIL_B_tol 
             FROM recipe_weight_oil_b WHERE recipe_id = ?`,
             [recipeId]
         );
-        
-        let [recipe_weight_PD] = await conn.query(
+
+        let [recipe_weight_PD] = await db.query(
             `SELECT PD_index, Act, PD_materialName, PD_materialCode, PD_set, PD_tol 
             FROM recipe_weight_chemical_pd WHERE recipe_id = ?`,
             [recipeId]
@@ -141,43 +142,39 @@ async function getRecipeById(recipeId) {
 
 
 
-        let [recipe_weight_filler] = await conn.query(
+        let [recipe_weight_filler] = await db.query(
             `SELECT FL_index, Act, FL_materialName, FL_materialCode, FL_set, FL_tol 
             FROM recipe_weight_filler WHERE recipe_id = ?`,
             [recipeId]
         );
-        
-        // const [recipe_weight_silica] = await conn.query(
-            //     `SELECT SI_index, Act, SI_materialName, SI_materialCode, SI_set, SI_tol 
-            //     FROM recipe_weight_silica WHERE recipe_id = ?`,
-        //     [recipeId]
-        // );
 
-//check for empty arrays and set  defult values for display purpose
+
+        //check for empty arrays and set  defult values for display purpose
 
         if (!Array.isArray(recipe_weight_CB) || recipe_weight_CB.length === 0) {
-            recipe_weight_CB = [{ 
-        "CB_index": "1",
-        "Act": "",
-        "CB_materialName": "",
-        "CB_materialCode": "",
-        "CB_set": "",
-        "CB_tol": "",}];
+            recipe_weight_CB = [{
+                "CB_index": "1",
+                "Act": "",
+                "CB_materialName": "",
+                "CB_materialCode": "",
+                "CB_set": "",
+                "CB_tol": "",
+            }];
         }
 
         if (!Array.isArray(recipe_weight_PD) || recipe_weight_PD.length === 0) {
-            recipe_weight_PD = [{ 
+            recipe_weight_PD = [{
                 "PD_index": "1",
                 "Act": "",
                 "PD_materialName": "",
                 "PD_materialCode": "",
                 "PD_set": "",
                 "PD_tol": "",
-                }];
+            }];
         }
 
         if (!Array.isArray(recipe_weight_filler) || recipe_weight_filler.length === 0) {
-            recipe_weight_filler = [{ 
+            recipe_weight_filler = [{
                 "FL_index": "1",
                 "Act": "",
                 "FL_materialName": "",
@@ -188,7 +185,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_poly) || recipe_weight_poly.length === 0) {
-            recipe_weight_poly = [{ 
+            recipe_weight_poly = [{
                 "POLY_index": "1",
                 "POLY_materialName": "",
                 "POLY_materialCode": "",
@@ -199,7 +196,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_oil_a) || recipe_weight_oil_a.length === 0) {
-            recipe_weight_oil_a = [{ 
+            recipe_weight_oil_a = [{
                 "OIL_A_index": "1",
                 "Act": "",
                 "OIL_A_materialName": "",
@@ -210,7 +207,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_oil_b) || recipe_weight_oil_b.length === 0) {
-            recipe_weight_oil_b = [{ 
+            recipe_weight_oil_b = [{
                 "OIL_B_index": "1",
                 "Act": "",
                 "OIL_B_materialName": "",
@@ -259,8 +256,6 @@ async function getRecipeById(recipeId) {
             error: error.message,
             errLocation: "controller/recipe.controller.js - getRecipeById"
         };
-    } finally {
-        conn.release(); // Always release the connection
     }
 }
 
@@ -275,7 +270,8 @@ async function getRecipeById(recipeId) {
  *   - error?: Error message if operation failed
  * @throws {Error} Database transaction errors
  */
-async function deleteRecipeByID(recipeId) {
+async function deleteRecipeByID(recipeId, db) {
+
     const conn = await db.getConnection();
 
     try {
@@ -374,8 +370,10 @@ async function deleteRecipeByID(recipeId) {
  * } catch (error) {
  *   console.error('Failed to insert recipe:', error);
  * }
- */
-async function insertRecipe(recipe_json, newInsert = false) {
+*/
+async function insertRecipe(recipe_json, newInsert = false, db) {
+
+    const conn = await db.getConnection();
     const recipe_id = recipe_json.recipe_weighing.recipe_id;
 
     // Array/Object initialization with null checks
@@ -392,7 +390,6 @@ async function insertRecipe(recipe_json, newInsert = false) {
 
     // console.log("inside inser recipe",recipeWeightCB );
 
-    const conn = await db.getConnection();
     const results = {
         mixing: 0,
         weighing: 0,
@@ -727,11 +724,10 @@ async function insertRecipe(recipe_json, newInsert = false) {
  * }
  */
 
-async function getAllRecipeIDs() {
-    const conn = await db.getConnection();
+async function getAllRecipeIDs(db) {
     try {
         const query = `SELECT recipe_id FROM recipe_weighing`;
-        const [rows] = await conn.query(query);
+        const [rows] = await db.query(query);
         const recipeIDs = rows.map(row => row.recipe_id);
         return {
             success: true,
@@ -743,26 +739,22 @@ async function getAllRecipeIDs() {
             success: false,
             message: "Database error occurred while fetching recipe IDs",
             error: error.message,
-            recipe_ids: []  
+            recipe_ids: []
         };
-    } finally {
-        conn.release(); // ✅ always release        
     }
 }
 
 
-async function recipeHistory(recipe_id, action, data) {
-    const conn = await db.getConnection();
+async function recipeHistory(recipe_id, action, data, db) {
+
     const jsonData = JSON.stringify(data);
     try {
         const historyQuery = `INSERT INTO recipe_history (recipe_id, action, data) VALUES (?, ?, ?)`;
-        const [result] = await conn.query(historyQuery, [recipe_id, action, jsonData]);
+        const [result] = await db.query(historyQuery, [recipe_id, action, jsonData]);
         return result;
     } catch (error) {
         console.error("Error inserting recipe history:", error);
         throw error;
-    } finally {
-        conn.release();
     }
 }
 

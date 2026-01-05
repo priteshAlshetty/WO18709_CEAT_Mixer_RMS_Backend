@@ -1,6 +1,6 @@
-const db = require("../mysql.conn.js");
+// const db = require("../mysql.conn.js");
 
-async function getAllMaterials() {
+async function getAllMaterials(db) {
 
     try {
         const [cb] = await db.query("SELECT `material_code`, `material_name`  ,`BinID` FROM `material_manager` WHERE `material_type`='CB'   ORDER BY `material_name` ASC");
@@ -57,7 +57,7 @@ async function getAllMaterials() {
     } finally {
     }
 }
-async function addMaterial(materialData) {
+async function addMaterial(materialData, db) {
 
     try {
         const [result] = await db.query("INSERT INTO `material_manager` (`material_code`, `material_name`, `material_type`) VALUES (?, ?, ?)", [materialData.material_code, materialData.material_name, materialData.material_type]);
@@ -87,7 +87,7 @@ async function addMaterial(materialData) {
     }
 }
 
-async function deleteMaterial(materialData) {
+async function deleteMaterial(materialData, db) {
     try {
         const [result] = await db.query("DELETE FROM `material_manager` WHERE `material_code` = ?", [materialData.material_code]);
 
@@ -116,7 +116,7 @@ async function deleteMaterial(materialData) {
     }
 }
 
-async function getDropdownMaterials() {
+async function getDropdownMaterials(db) {
 
     try {
         const [CB] = await db.query("SELECT  `material_name` AS name, `material_code` AS code FROM `material_manager` WHERE `material_type` ='CB'  ORDER BY `material_name` ASC");

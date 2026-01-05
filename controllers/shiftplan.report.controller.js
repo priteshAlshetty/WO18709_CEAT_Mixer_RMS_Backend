@@ -1,9 +1,9 @@
-const db = require("../config/config.mysql.report.js");
+// const db = require("../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
 
-async function getShiftPlanReport(params) {
+async function getShiftPlanReport(params, db) {
 
 
     try {

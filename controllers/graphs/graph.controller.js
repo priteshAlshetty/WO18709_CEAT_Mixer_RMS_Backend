@@ -1,4 +1,4 @@
-const db = require("../../config/config.mysql.report.js");
+// const db = require("../../config/config.mysql.report.js");
 const path = require("path");
 const fs = require("fs");
 const ExcelJS = require("exceljs");
@@ -42,7 +42,7 @@ function getMySQLTimestamp(utcInput) {
  * Accepts Date objects or date strings for `from` and `to`.
  * Returns a consistent object with `status` and `recipe_id` array, or `status:false` and `error` on failure.
  */
-async function getRecipeIdByDate(param = {}) {
+async function getRecipeIdByDate(param = {}, db) {
     try {
         if (!param.from || !param.to) {
             return { status: false, error: 'Missing required "from" or "to" parameter' };
@@ -66,7 +66,7 @@ async function getRecipeIdByDate(param = {}) {
     }
 }
 
-async function getSrNoByRecipeId(param = {}) {
+async function getSrNoByRecipeId(param = {}, db) {
     try {
         if (!param.recipe_id || !param.from || !param.to) return { status: false, error: 'Missing recipe_id/from/to' };
 
@@ -93,7 +93,7 @@ async function getSrNoByRecipeId(param = {}) {
     }
 }
 
-async function getBatchCountBySrno(param = {}) {
+async function getBatchCountBySrno(param = {}, db) {
     try {
         if (!param.sr_no) return { status: false, error: 'Missing sr_no' };
 
@@ -111,7 +111,7 @@ async function getBatchCountBySrno(param = {}) {
     }
 }
 
-async function getGraphDataByBatchNo(param = {}) {
+async function getGraphDataByBatchNo(param = {}, db) {
     try {
         let { sr_no, batch_no, from, to } = param;
         if (!sr_no || !batch_no || !from || !to) {
