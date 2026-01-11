@@ -96,13 +96,12 @@ async function getRecipeById(recipeId) {
             `SELECT * FROM recipe_weighing WHERE recipe_id = ?`,
             [recipeId]
         );
-// convert timestamps to string to avoid issues in frontend
+        // convert timestamps to string to avoid issues in frontend
 
         let timestampFields = recipe_weighing[0]['ModifyTime'];
-       
-        if (timestampFields){
-            console.log("inside timestamp conversion", timestampFields);
-            recipe_weighing[0]['ModifyTime'] =  new Date(timestampFields).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
+        if (timestampFields) {
+            recipe_weighing[0]['ModifyTime'] = new Date(timestampFields).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
         }
 
         if (recipe_weighing && 'Id' in recipe_weighing[0]) {
@@ -132,7 +131,7 @@ async function getRecipeById(recipeId) {
             FROM recipe_weight_oil_b WHERE recipe_id = ?`,
             [recipeId]
         );
-        
+
         let [recipe_weight_PD] = await conn.query(
             `SELECT PD_index, Act, PD_materialName, PD_materialCode, PD_set, PD_tol 
             FROM recipe_weight_chemical_pd WHERE recipe_id = ?`,
@@ -146,38 +145,39 @@ async function getRecipeById(recipeId) {
             FROM recipe_weight_filler WHERE recipe_id = ?`,
             [recipeId]
         );
-        
+
         // const [recipe_weight_silica] = await conn.query(
-            //     `SELECT SI_index, Act, SI_materialName, SI_materialCode, SI_set, SI_tol 
-            //     FROM recipe_weight_silica WHERE recipe_id = ?`,
+        //     `SELECT SI_index, Act, SI_materialName, SI_materialCode, SI_set, SI_tol 
+        //     FROM recipe_weight_silica WHERE recipe_id = ?`,
         //     [recipeId]
         // );
 
-//check for empty arrays and set  defult values for display purpose
+        //check for empty arrays and set  defult values for display purpose
 
         if (!Array.isArray(recipe_weight_CB) || recipe_weight_CB.length === 0) {
-            recipe_weight_CB = [{ 
-        "CB_index": "1",
-        "Act": "",
-        "CB_materialName": "",
-        "CB_materialCode": "",
-        "CB_set": "",
-        "CB_tol": "",}];
+            recipe_weight_CB = [{
+                "CB_index": "1",
+                "Act": "",
+                "CB_materialName": "",
+                "CB_materialCode": "",
+                "CB_set": "",
+                "CB_tol": "",
+            }];
         }
 
         if (!Array.isArray(recipe_weight_PD) || recipe_weight_PD.length === 0) {
-            recipe_weight_PD = [{ 
+            recipe_weight_PD = [{
                 "PD_index": "1",
                 "Act": "",
                 "PD_materialName": "",
                 "PD_materialCode": "",
                 "PD_set": "",
                 "PD_tol": "",
-                }];
+            }];
         }
 
         if (!Array.isArray(recipe_weight_filler) || recipe_weight_filler.length === 0) {
-            recipe_weight_filler = [{ 
+            recipe_weight_filler = [{
                 "FL_index": "1",
                 "Act": "",
                 "FL_materialName": "",
@@ -188,7 +188,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_poly) || recipe_weight_poly.length === 0) {
-            recipe_weight_poly = [{ 
+            recipe_weight_poly = [{
                 "POLY_index": "1",
                 "POLY_materialName": "",
                 "POLY_materialCode": "",
@@ -199,7 +199,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_oil_a) || recipe_weight_oil_a.length === 0) {
-            recipe_weight_oil_a = [{ 
+            recipe_weight_oil_a = [{
                 "OIL_A_index": "1",
                 "Act": "",
                 "OIL_A_materialName": "",
@@ -210,7 +210,7 @@ async function getRecipeById(recipeId) {
         }
 
         if (!Array.isArray(recipe_weight_oil_b) || recipe_weight_oil_b.length === 0) {
-            recipe_weight_oil_b = [{ 
+            recipe_weight_oil_b = [{
                 "OIL_B_index": "1",
                 "Act": "",
                 "OIL_B_materialName": "",
@@ -518,7 +518,11 @@ async function insertRecipe(recipe_json, newInsert = false) {
             const [mixingResult] = await conn.query(mixQuery, [recipe_mixing_values]);
             results.mixing = mixingResult.affectedRows;
         }
-        let ModifyTime = getMySQLTimestamp();
+        // let ModifyTime = getMySQLTimestamp();
+        let ModifyTime = new Date().toLocaleString("sv-SE", {
+            timeZone: "Asia/Kolkata"
+        }).replace('T', ' ');
+
         // Recipe Weighing Insert (Always required)
         if (Object.keys(recipeWeighing).length > 0) {
             const weighValues = [
@@ -743,7 +747,7 @@ async function getAllRecipeIDs() {
             success: false,
             message: "Database error occurred while fetching recipe IDs",
             error: error.message,
-            recipe_ids: []  
+            recipe_ids: []
         };
     } finally {
         conn.release(); // ✅ always release        
