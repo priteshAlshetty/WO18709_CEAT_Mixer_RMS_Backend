@@ -9,7 +9,8 @@ const {
 
 // Route to get all materials
 router.get('/getMaterials', async (req, res) => {
-    const result = await getAllMaterials();
+    const rmsDb = req.db.rms;
+    const result = await getAllMaterials(rmsDb);
     if (result.success) {
         res.status(200).json(result.data);
     } else {
@@ -22,7 +23,8 @@ router.get('/getMaterials', async (req, res) => {
 
 // Route to get dropdown materials
 router.get('/getMaterials/options', async (req, res) => {
-    const result = await getDropdownMaterials();
+    const rmsDb = req.db.rms;
+    const result = await getDropdownMaterials(rmsDb);
     if (result.success) {
 
         res.status(200).json(result);
@@ -38,6 +40,7 @@ router.get('/getMaterials/options', async (req, res) => {
 // Route to add a new material
 router.post('/addMaterial', async (req, res) => {
     const materialData = req.body.material_data;
+    const rmsDb = req.db.rms;
 
     if (!materialData || !materialData.material_code || !materialData.material_name || !materialData.material_type) {
         return res.status(400).json({
@@ -45,7 +48,7 @@ router.post('/addMaterial', async (req, res) => {
             error: "missing fields: material data. 'material_code', 'material_name', and 'material_type' are required."
         });
     }
-    const result = await addMaterial(materialData);
+    const result = await addMaterial(materialData, rmsDb);
     if (result.success) {
         res.status(201).json(result);
     } else {
@@ -59,14 +62,14 @@ router.post('/addMaterial', async (req, res) => {
 
 router.delete('/deleteMaterial', async (req, res) => {
     const materialData = req.body.material_data;
-
+    const rmsDb = req.db.rms;
     if (!materialData || !materialData.material_code) {
         return res.status(400).json({
             errLocation: "deleteMaterial route - validation",
             error: "missing fields: material data. 'material_code' is required."
         });
     }
-    const result = await deleteMaterial(materialData);
+    const result = await deleteMaterial(materialData, rmsDb);
     if (result.success) {
         res.status(200).json(result);
     } else {

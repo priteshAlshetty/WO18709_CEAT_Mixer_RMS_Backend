@@ -6,6 +6,10 @@ module.exports = {
     Mixer2: {
         rms: require("./mixer2/mixer2.mysql.rms"),
         report: require("./mixer2/mixer2.mysql.report")
+    },
+    Mixer3: {
+        rms: require("./mixer3/mixer3.mysql.rms"),
+        report: require("./mixer3/mixer3.mysql.report")
     }
-    // mixer3 can be added here later
+
 };

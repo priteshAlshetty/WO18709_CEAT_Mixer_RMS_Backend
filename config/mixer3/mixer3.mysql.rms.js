@@ -5,7 +5,7 @@ const pool = mysql.createPool({
     host: 'localhost',
     user: 'nodejs',
     password: '1234',
-    database: 'ceat_mixer2_report',
+    database: 'ceat_mixer3_rms',
     port: 3306,
     waitForConnections: true,
     connectionLimit: 10,

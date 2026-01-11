@@ -43,10 +43,11 @@ router.post('/checkRecipeExists/byId', async (req, res) => {
         });
     }
     const recipeId = req.body.recipe_id;
+    const rmsDb = req.db.rms;
 
     try {
         if (recipeId) {
-            const recipe = await checkRecipeExists(recipeId);
+            const recipe = await checkRecipeExists(recipeId, rmsDb);
             if (recipe && recipe.mixingExists && recipe.weighingExists) {
                 res.status(200).json({ message: 'Recipe exists', data: recipe });
             } else if (recipe && (!recipe.mixingExists || !recipe.weighingExists)) {
@@ -70,12 +71,12 @@ router.post('/checkRecipeExists/byId', async (req, res) => {
 
 router.post('/viewRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
-
+    const rmsDb = req.db.rms;
 
     // console.log("recipeId received at backend viewRecipe/byId endpoint", recipeId);
     try {
         if (recipeId) {
-            const recipe = await getRecipeById(recipeId);
+            const recipe = await getRecipeById(recipeId, rmsDb);
             if (recipe && recipe.success) {
                 // console.log("JSON : ",recipe);
                 res.status(200).json({ data: recipe });
@@ -103,13 +104,13 @@ router.post('/editRecipe/byId', async (req, res) => {
     }
     // Use nullish coalescing to assign null if req.body.recipe doesn't exist
     const recipe = req.body?.recipe ?? null;
-
+    const rmsDb = req.db.rms;
 
     // console.log("recipe received at backend editRecipe/byId endpoint", recipe);
 
     try {
         if (recipe) {
-            const result = await insertRecipe(recipe);
+            const result = await insertRecipe(recipe, false, rmsDb);
             res.status(200).json({
                 message: 'Recipe updated successfully', data: result
             });
@@ -141,13 +142,14 @@ router.post('/addNewRecipe', async (req, res) => {
         });
     }
     const recipe = req.body.recipe;
-    console.log("recipe recieved", recipe)
+    const rmsDb = req.db.rms;
+    // console.log("recipe recieved", recipe)
     const recipeId = req.body.recipe.recipe_id;
     //console.log("recipe received at backend addNewRecipe/byId endpoint", recipe);
     try {
         if (recipe && recipeId) {
-            const existingRecipe = await checkRecipeExists(recipeId);
-            console.log("existingRecipe", existingRecipe);
+            const existingRecipe = await checkRecipeExists(recipeId, rmsDb);
+            // console.log("existingRecipe", existingRecipe);
             if (existingRecipe.mixingExists || existingRecipe.weighingExists) {
                 return res.status(400).json({
                     error: "Recipe ID already exists",
@@ -155,7 +157,7 @@ router.post('/addNewRecipe', async (req, res) => {
                     message: `Recipe with ID ${recipeId} already exists, either go to edit recipe or delete it!!`
                 });
             }
-            const result = await insertRecipe(recipe, true);
+            const result = await insertRecipe(recipe, true, rmsDb);
             res.status(200).json({ message: 'Recipe  Added successfully', data: result });
         } else {
             res.status(400).json({ message: 'recipe missing' });
@@ -173,10 +175,10 @@ router.post('/addNewRecipe', async (req, res) => {
 
 router.delete('/deleteRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
-
+    const rmsDb = req.db.rms;
     try {
         if (recipeId) {
-            const result = await deleteRecipeByID(recipeId);
+            const result = await deleteRecipeByID(recipeId, rmsDb);
             res.status(200).json({ message: 'Recipe deleted successfully', data: result });
         } else {
             res.status(400).json({ message: 'recipe_id missing' });
