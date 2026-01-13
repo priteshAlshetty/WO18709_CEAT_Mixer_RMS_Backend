@@ -515,7 +515,7 @@ async function insertRecipe(recipe_json, newInsert = false, db) {
             const [mixingResult] = await conn.query(mixQuery, [recipe_mixing_values]);
             results.mixing = mixingResult.affectedRows;
         }
-        let ModifyTime = getMySQLTimestamp();
+        let ModifyTime = getMySQLTimestamp(Date.now());
         // Recipe Weighing Insert (Always required)
         if (Object.keys(recipeWeighing).length > 0) {
             const weighValues = [
@@ -669,7 +669,7 @@ async function insertRecipe(recipe_json, newInsert = false, db) {
         }
 
         await conn.commit();
-        await recipeHistory(recipe_id, 'insert', recipe_json);
+        await recipeHistory(recipe_id, 'insert', recipe_json, db);
         return {
             success: true,
             affectedRows: results,

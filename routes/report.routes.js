@@ -2,10 +2,8 @@ const express = require('express');
 const { getBatchNameByDate, getSerialByBatchName, getBatchNoBySerialNo, getExcelBatchReport } = require('../controllers/reporting.form.controller.js');
 const { getCleanoutReport } = require('../controllers/cleanout.controller.js');
 const { generateExcelMaterialReport } = require('../controllers/report.controller.js');
-
 const { getShiftPlanReport } = require('../controllers/shiftplan.report.controller.js');
 const { getProductionReport } = require('../controllers/report.production.js');
-
 const {
     generateSummaryExcelReport,
     getRecipeIdsBtDateTime,
@@ -25,7 +23,7 @@ router.post('/weighing/getExcelReport', async (req, res) => {
     }
 
     try {
-        const result = await generateExcelMaterialReport({ from, to });
+        const result = await generateExcelMaterialReport({ from, to }, req.db.report);
 
         // Case 1: No data found
         if (!result?.status && result?.error?.code === "NO_DATA") {
@@ -88,7 +86,7 @@ router.post('/batch/getBatchName/bydate', async (req, res) => {
 
         const { from, to } = requestData;
 
-        const batchNames = await getBatchNameByDate(from, to);
+        const batchNames = await getBatchNameByDate(from, to, req.db.report);
 
         if (!batchNames || batchNames.length === 0) {
             console.warn(`⚠ No batch names found between ${from} and ${to}`);
@@ -124,7 +122,7 @@ router.post('/batch/getSerial/byBatchName', async (req, res) => {
 
         const { batchName, from, to } = requestData;
 
-        const serialNumbers = await getSerialByBatchName(batchName, from, to);
+        const serialNumbers = await getSerialByBatchName(batchName, from, to, req.db.report);
 
         if (!serialNumbers || serialNumbers.length === 0) {
             console.warn("⚠ No serial numbers found");
@@ -153,7 +151,7 @@ router.post('/batch/getbatchNo/bySerialNo', async (req, res) => {
 
         const { serialNo } = requestData;
 
-        const batchNumbers = await getBatchNoBySerialNo(serialNo);
+        const batchNumbers = await getBatchNoBySerialNo(serialNo, req.db.report);
 
         if (!batchNumbers || batchNumbers.length === 0) {
             console.warn(`⚠ No batch numbers found for serialNo: ${serialNo}`);
@@ -185,7 +183,7 @@ router.post('/batch/getExcelReport', async (req, res) => {
         // ---- Generate Excel & get file path ----
         let reportPath;
         try {
-            reportPath = await getExcelBatchReport(reportParams);
+            reportPath = await getExcelBatchReport(reportParams, req.db.report);
             console.log("✔ Generated Report path:", reportPath);
         } catch (err) {
             console.error("❌ Error generating Excel report:", err);
@@ -223,7 +221,7 @@ router.post('/summary/getBatchName/byDateTime', async (req, res) => {
         if (from === undefined || to === undefined) {
             return res.status(400).json({ message: "Missing 'from' or 'to' date" });
         }
-        const batchNames = await getRecipeIdsBtDateTime({ dttmFrom: from, dttmTo: to });
+        const batchNames = await getRecipeIdsBtDateTime({ dttmFrom: from, dttmTo: to }, req.db.report);
         if (!batchNames || batchNames.length === 0) {
             return res.status(404).json({ message: "No Recipe IDs found" });
         }
@@ -246,7 +244,7 @@ router.post('/summary/getSerial/byBatchName', async (req, res) => {
             batch_name,
             from,
             to
-        });
+        }, req.db.report);
         console.log("✔ Serial Numbers:", serialNumbers);
         if (!serialNumbers || serialNumbers.length === 0) {
             return res.status(404).json({ message: "No Serial Numbers found" });
@@ -267,7 +265,7 @@ router.post('/summary/getExcelReport', async (req, res) => {
         return res.status(400).json({ message: "Missing 'from', 'to', 'batch_name', or 'serial_no'" });
     }
     try {
-        const reportPath = await generateSummaryExcelReport({ dttmFrom: from, dttmTo: to, batch_name, serial_no });
+        const reportPath = await generateSummaryExcelReport({ dttmFrom: from, dttmTo: to, batch_name, serial_no },);
         console.log("✔ Generated Report path:", reportPath);
         if (!reportPath || !fs.existsSync(reportPath.filePath)) {
             return res.status(500).json({ message: "Generated report file not found" });
@@ -300,7 +298,7 @@ router.post('/cleanoutReport/byDate', async (req, res) => {
 
     try {
         // ⬅ getCleanoutReport returns { status, filePath }
-        const result = await getCleanoutReport({ from, to });
+        const result = await getCleanoutReport({ from, to }, req.db.report);
 
         // ⛔ Case 1: No data found
         if (result.status === false && result.code === "NO_DATA") {
@@ -355,7 +353,7 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
 
     try {
         // ⬅ generateExcelMaterialReport returns { status, filePath }
-        const result = await getShiftPlanReport({ from, to });
+        const result = await getShiftPlanReport({ from, to }, req.db.report);
 
         // ⛔ Case 1: No data found
         if (result.status === false && result.code === "NO_DATA") {
@@ -401,7 +399,6 @@ router.post('/shiftPlan/getExcelReport/complete', async (req, res) => {
 });
 //------production
 
-
 router.post('/production/getExcelReport/complete', async (req, res) => {
     const { from, to } = req.body;
 
@@ -412,7 +409,7 @@ router.post('/production/getExcelReport/complete', async (req, res) => {
     }
 
     try {
-        const result = await getProductionReport({ from, to });
+        const result = await getProductionReport({ from, to }, req.db.report);
 
         // NO DATA CONDITION
         if (!result?.status && result?.error?.code === "NO_DATA") {
@@ -483,7 +480,7 @@ router.post('/alarm/generateReport', async (req, res) => {
         }
 
         // Call service
-        const result = await getAlarmReport({ from, to });
+        const result = await getAlarmReport({ from, to }, req.db.report);
 
         if (!result.status) {
             // Handle service failure

@@ -18,7 +18,7 @@ router.post('/getDowntime/byDateTime', async (req, res) => {
         if (!from || !to) {
             return res.status(400).json({ message: "Missing required parameters: from, to" });
         }
-        const result = await getDowntime(params);
+        const result = await getDowntime(params, req.db.rms);
         if (result.status) {
             return res.status(200).json({ downtime_data: result.downtime_data });
         }
@@ -39,7 +39,7 @@ router.post('/updateDowntime', async (req, res) => {
         if (!downtime_data || !Array.isArray(downtime_data) || downtime_data.length === 0) {
             return res.status(400).json({ message: "Missing or invalid required parameter: downtime_data" });
         }
-        const result = await updateDowntime(params);
+        const result = await updateDowntime(params, req.db.rms);
         if (result.status) {
             return res.status(200).json({ status: result.status, affectedRows: result.affectedRows });
         }
@@ -59,7 +59,7 @@ router.post('/deleteDowntime', async (req, res) => {
         if (!sr) {
             return res.status(400).json({ message: "Missing required parameter: sr" });
         }
-        const result = await deleteDowntime(params);
+        const result = await deleteDowntime(params, req.db.rms);
         if (result.status) {
             return res.status(200).json({ status: result.status, affectedRows: result.affectedRows });
         }
@@ -75,7 +75,7 @@ router.post('/deleteDowntime', async (req, res) => {
 router.post('/addDowntime', async (req, res) => {
     try {
         const params = req.body;
-        const result = await addDowntime(params);
+        const result = await addDowntime(params, req.db.rms);
         if (result.status) {
             return res.status(200).json({ status: result.status, insertedId: result.insertedId });
         }
@@ -99,7 +99,7 @@ router.post('/generateReport', async (req, res) => {
 
             return res.status(400).json({ message: "Missing required parameters: from, to" });
         }
-        const result = await generateDowntimeReport(params);
+        const result = await generateDowntimeReport(params, req.db.report);
         const reportPath = result.filePath;
         // validate file path
         if (!reportPath || !fs.existsSync(reportPath)) {

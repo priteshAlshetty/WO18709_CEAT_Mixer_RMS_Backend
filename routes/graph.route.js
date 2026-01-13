@@ -20,7 +20,7 @@ router.post('/getRecipeIdByDate', async (req, res) => {
     }
 
     try {
-        const result = await getRecipeIdByDate({ from, to });
+        const result = await getRecipeIdByDate({ from, to }, req.db.report);
 
         // Always 200 for valid request
         return res.status(200).json(result);
@@ -50,7 +50,7 @@ router.post('/getSrNoByRecipeId', async (req, res) => {
     }
 
     try {
-        const result = await getSrNoByRecipeId({ from, to, recipe_id });
+        const result = await getSrNoByRecipeId({ from, to, recipe_id }, req.db.report);
 
         return res.status(200).json({ result });
 
@@ -75,7 +75,7 @@ router.post('/getBatchCountBySrno', async (req, res) => {
     }
 
     try {
-        const result = await getBatchCountBySrno({ sr_no, from, to, recipe_id });
+        const result = await getBatchCountBySrno({ sr_no, from, to, recipe_id }, req.db.report);
 
         return res.status(200).json(result);
 
@@ -102,7 +102,7 @@ router.post('/getGraphDataByBatchNo', async (req, res) => {
     }
 
     try {
-        const result = await getGraphDataByBatchNo({ sr_no, from, to, recipe_id, batch_no });
+        const result = await getGraphDataByBatchNo({ sr_no, from, to, recipe_id, batch_no }, req.db.report);
 
         return res.status(200).json(result);
 

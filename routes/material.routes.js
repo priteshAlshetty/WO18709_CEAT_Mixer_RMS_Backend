@@ -63,6 +63,7 @@ router.post('/addMaterial', async (req, res) => {
 router.delete('/deleteMaterial', async (req, res) => {
     const materialData = req.body.material_data;
     const rmsDb = req.db.rms;
+    console.log("Received deleteMaterial request for:", materialData);
     if (!materialData || !materialData.material_code) {
         return res.status(400).json({
             errLocation: "deleteMaterial route - validation",
