@@ -118,14 +118,14 @@ async function getSummaryData(params, db) {
                 batch_no: row.batch_no,
                 recipe_id: row.recipe_id,
                 serial_no: row.serial_no
-            });
+            }, db);
             // console.log("Material Data:", material_data);
 
             const batch_data = await getBatchDetails({
                 batch_no: row.batch_no,
                 recipe_id: row.recipe_id,
                 serial_no: row.serial_no
-            });
+            }, db);
 
             const [summaryData] = await db.query(`
                 SELECT oil_time,oil_temp, oil_feed, cb_time, bwb
@@ -143,7 +143,8 @@ async function getSummaryData(params, db) {
         }
         return summary_data;
     } catch (error) {
-        return error;
+        console.error("Error in getSummaryData() :", error);
+        throw error;
     }
 }
 
@@ -342,12 +343,8 @@ async function generateSummaryExcelReport(params, db) {
         return { status: true, filePath };
 
     } catch (error) {
-        return {
-            status: false,
-            errLocation: "In summary.controller.js ,At function call generateSummeryExcelReport()",
-            params,
-            error
-        }
+        console.error("Summary generateSummaryExcelReport() Error:", error);
+        throw error;
     }
 }
 

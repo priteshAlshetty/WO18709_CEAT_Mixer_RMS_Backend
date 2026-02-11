@@ -371,9 +371,9 @@ async function generateExcelBatchReport(params, db) {
         const { batch_no, serial_no, recipe_id } = param;
 
         // Fetch data
-        const batch_details = await getBatchDetails({ batch_no, serial_no, recipe_id });
-        const weighing_details = await getWeighingDetails({ batch_no, serial_no, recipe_id });
-        const mixing_details = await getMixingDetails({ batch_no, serial_no, recipe_id });
+        const batch_details = await getBatchDetails({ batch_no, serial_no, recipe_id }, db);
+        const weighing_details = await getWeighingDetails({ batch_no, serial_no, recipe_id }, db);
+        const mixing_details = await getMixingDetails({ batch_no, serial_no, recipe_id }, db);
 
         if (!batch_details || Object.keys(batch_details).length === 0) {
             console.log(`❌ No data for Serial ${serial_no}, Batch ${batch_no}`);

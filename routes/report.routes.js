@@ -265,7 +265,7 @@ router.post('/summary/getExcelReport', async (req, res) => {
         return res.status(400).json({ message: "Missing 'from', 'to', 'batch_name', or 'serial_no'" });
     }
     try {
-        const reportPath = await generateSummaryExcelReport({ dttmFrom: from, dttmTo: to, batch_name, serial_no },);
+        const reportPath = await generateSummaryExcelReport({ dttmFrom: from, dttmTo: to, batch_name, serial_no }, req.db.report);
         console.log("✔ Generated Report path:", reportPath);
         if (!reportPath || !fs.existsSync(reportPath.filePath)) {
             return res.status(500).json({ message: "Generated report file not found" });
