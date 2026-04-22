@@ -21,7 +21,7 @@ const mixerDbMiddleware = require("./middleware/mixerDb.middleware");
 const app = express();
 
 
-const port = process.env.PORT || 3000;
+const port = 3001;
 
 
 // Enable CORS for all requests
@@ -63,7 +63,7 @@ const server = app.listen(port, '0.0.0.0', () => {
     logger.info(`RMS backend app listening on port ${port}`);
     logger.info(`Backend started at ${new Date(Date.now()).toLocaleString()}`);
 
-    console.log(`RMS backend app listening on port ${port}`);
+    console.log(`RMS Mixer123 backend app listening on port ${port}`);
 });
 
 server.keepAliveTimeout = 65000;
