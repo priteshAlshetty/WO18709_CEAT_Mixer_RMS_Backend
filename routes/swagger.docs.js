@@ -1546,3 +1546,137 @@
  *       500:
  *         description: Internal server error
  */
+/**
+ * @swagger
+ * /recipeStatus/getAllRecipeStatus:
+ *   get:
+ *     summary: Get all recipe statuses
+ *     description: Fetches all recipe status records from the RMS database.
+ *     tags:
+ *       - Recipe Status
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
+ *     responses:
+ *       200:
+ *         description: Recipe statuses fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 errLocation:
+ *                   type: string
+ *                   example: GET /getAllRecipeStatus route handler.
+ *                 error:
+ *                   type: string
+ *                   example: Database connection failed
+ */
+
+
+/**
+ * @swagger
+ * /recipeStatus/updateRecipeStatus:
+ *   post:
+ *     summary: Update recipe activation status
+ *     description: Updates the activation status of a recipe using recipe ID.
+ *     tags:
+ *       - Recipe Status
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - recipe_id
+ *               - recipe_name
+ *               - IsActivate
+ *             properties:
+ *               recipe_id:
+ *                 type: string
+ *                 example: TRIAL004
+ *               recipe_name:
+ *                 type: string
+ *                 example: "001"
+ *               IsActivate:
+ *                 type: integer
+ *                 example: 0
+ *           example:
+ *             recipe_id: TRIAL004
+ *             recipe_name: "001"
+ *             IsActivate: 0
+ *     responses:
+ *       200:
+ *         description: Recipe status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Recipe status updated successfully
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Missing required fields
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 errLocation:
+ *                   type: string
+ *                   example: POST /updateRecipeStatus route handler.
+ *                 error:
+ *                   type: string
+ *                   example: Database update failed
+ */
