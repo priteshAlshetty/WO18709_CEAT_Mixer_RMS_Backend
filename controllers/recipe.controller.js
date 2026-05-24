@@ -75,6 +75,8 @@ async function getRecipeById(recipeId, db) {
         let recipeFound;
         const recipeExists = await checkRecipeExists(recipeId, db);
 
+        const [isActivate] = await db.query("SELECT IsActivate FROM recipe_weighing WHERE recipe_id = ?", [recipeId]);
+
         if (!recipeExists.mixingExists || !recipeExists.weighingExists) {
             recipeFound = false;
             return {
@@ -83,8 +85,17 @@ async function getRecipeById(recipeId, db) {
                 recipe_id: recipeId,
                 recipeExists
             };
-        }
 
+        }
+        if (isActivate && isActivate[0] && isActivate[0].IsActivate == 0) {
+            recipeFound = false;
+
+            return {
+                success: recipeFound,
+                message: `Recipe with ID ${recipeId} is not activated.`,
+                recipe_id: recipeId
+            };
+        }
         recipeFound = true;
 
         let [recipe_mixing] = await db.query(
@@ -726,7 +737,7 @@ async function insertRecipe(recipe_json, newInsert = false, db) {
 
 async function getAllRecipeIDs(db) {
     try {
-        const query = `SELECT recipe_id FROM recipe_weighing`;
+        const query = `SELECT recipe_id FROM recipe_weighing WHERE 1;`;
         const [rows] = await db.query(query);
         const recipeIDs = rows.map(row => row.recipe_id);
         return {

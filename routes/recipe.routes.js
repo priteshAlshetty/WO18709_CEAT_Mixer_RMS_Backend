@@ -73,7 +73,6 @@ router.post('/viewRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
     const rmsDb = req.db.rms;
 
-    // console.log("recipeId received at backend viewRecipe/byId endpoint", recipeId);
     try {
         if (recipeId) {
             const recipe = await getRecipeById(recipeId, rmsDb);
@@ -81,7 +80,8 @@ router.post('/viewRecipe/byId', async (req, res) => {
                 // console.log("JSON : ",recipe);
                 res.status(200).json({ data: recipe });
             } else if (recipe && !recipe.success) {
-                res.status(404).json({ message: 'Recipe not found', data: recipe });
+
+                res.status(400).json({ message: recipe.message, data: recipe });
             }
         } else {
             res.status(400).json({ message: 'Invalid recipe ID' });
