@@ -4,6 +4,8 @@ const cors = require('cors');
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./config/config.swagger.js"); // <-- your swagger config
 const recipeRoutes = require('./routes/recipe.routes.js');
+const authRoutes = require('./routes/auth.routes.js');
+const updateUsersRoutes = require('./routes/updateUsers.routes.js');
 const materialRoutes = require('./routes/material.routes.js');
 const reportRoutes = require('./routes/report.routes.js');
 const downtimeRoutes = require('./routes/downtime.route.js');
@@ -15,7 +17,7 @@ const recipeStatus = require('./routes/recipeStatus.routes.js');
 
 const loggingMiddleware = require('./middleware/middleware.logger.js');
 const mixerDbMiddleware = require("./middleware/mixerDb.middleware");
-
+const verifyToken = require("./middleware/middleware.auth.js");
 
 
 
@@ -38,7 +40,10 @@ app.get('/recipeFormat', (req, res) => {
 // 👉 Swagger docs route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(loggingMiddleware);
+app.use('/auth', authRoutes);
 app.use(mixerDbMiddleware);
+app.use(verifyToken); // Apply auth middleware to all routes below
+app.use('/updateUsers', updateUsersRoutes);
 app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
 app.use('/report', reportRoutes);

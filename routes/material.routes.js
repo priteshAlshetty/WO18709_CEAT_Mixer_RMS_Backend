@@ -41,6 +41,14 @@ router.get('/getMaterials/options', async (req, res) => {
 router.post('/addMaterial', async (req, res) => {
     const materialData = req.body.material_data;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions add material.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
 
     if (!materialData || !materialData.material_code || !materialData.material_name || !materialData.material_type) {
         return res.status(400).json({
@@ -63,6 +71,14 @@ router.post('/addMaterial', async (req, res) => {
 router.delete('/deleteMaterial', async (req, res) => {
     const materialData = req.body.material_data;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to delete material.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
     console.log("Received deleteMaterial request for:", materialData);
     if (!materialData || !materialData.material_code) {
         return res.status(400).json({
@@ -83,4 +99,3 @@ router.delete('/deleteMaterial', async (req, res) => {
 });
 
 module.exports = router;
-

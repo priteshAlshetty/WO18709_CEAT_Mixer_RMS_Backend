@@ -23,8 +23,16 @@ router.get("/getAllRecipeStatus", async (req, res) => {
 router.post("/updateRecipeStatus", async (req, res) => {
     const { recipe_id, recipe_name, IsActivate } = req.body;
     const rmsdb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to Enable/Disable recipe IDs.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
 
-    if (typeof recipe_id === 'undefined' || typeof IsActivate === 'undefined') {
+    if (!recipe_id || !IsActivate) {
         return res.status(400).json({
             success: false,
             message: "Missing required fields"

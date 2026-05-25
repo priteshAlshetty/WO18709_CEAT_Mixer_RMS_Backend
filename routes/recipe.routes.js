@@ -15,6 +15,15 @@ const { error } = require('winston');
 router.get('/allRecipeIds', async (req, res) => {
     try {
         const rmsDb = req.db.rms;
+        const user = req.user; // Access decoded token payload
+        if (!user || !user.auth_level || !["admin", "supervisor", "operator"].includes(user.auth_level)) {
+            return res.status(401).json({
+                message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to view  All recipe IDs.`,
+                username: user ? user.username : null,
+                auth_level: user ? user.auth_level : null
+            });
+        }
+        // User has valid auth level, proceed with fetching recipe IDs
         const allRecipeIds = await getAllRecipeIDs(rmsDb);
         if (allRecipeIds && allRecipeIds.success) {
             res.status(200).json({ data: allRecipeIds });
@@ -24,10 +33,12 @@ router.get('/allRecipeIds', async (req, res) => {
                 data: allRecipeIds
             });
         }
+
     } catch (error) {
         res.status(500).json({
             message: 'Error fetching recipe IDs',
             error: error.message,
+            errStack: error.stack,
             errLocation: "try catch block of endpoint allRecipeIds "
         });
     }
@@ -44,6 +55,14 @@ router.post('/checkRecipeExists/byId', async (req, res) => {
     }
     const recipeId = req.body.recipe_id;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor", "operator"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to check recipe IDs.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
 
     try {
         if (recipeId) {
@@ -72,6 +91,14 @@ router.post('/checkRecipeExists/byId', async (req, res) => {
 router.post('/viewRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor", "operator"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to view recipe ID.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
 
     try {
         if (recipeId) {
@@ -81,7 +108,7 @@ router.post('/viewRecipe/byId', async (req, res) => {
                 res.status(200).json({ data: recipe });
             } else if (recipe && !recipe.success) {
 
-                res.status(400).json({ message: recipe.message, data: recipe });
+                res.status(400).json({ message: recipe.message });
             }
         } else {
             res.status(400).json({ message: 'Invalid recipe ID' });
@@ -93,8 +120,7 @@ router.post('/viewRecipe/byId', async (req, res) => {
 });
 
 router.post('/editRecipe/byId', async (req, res) => {
-    // console.log("editRecipe/byId endpoint hit");
-    // console.log("req.body", req.body);
+
     if (!req.body) {
         return res.status(400).json({
             error: "missing request body",
@@ -105,6 +131,15 @@ router.post('/editRecipe/byId', async (req, res) => {
     // Use nullish coalescing to assign null if req.body.recipe doesn't exist
     const recipe = req.body?.recipe ?? null;
     const rmsDb = req.db.rms;
+
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to edit recipe IDs.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
 
     // console.log("recipe received at backend editRecipe/byId endpoint", recipe);
 
@@ -143,6 +178,15 @@ router.post('/addNewRecipe', async (req, res) => {
     }
     const recipe = req.body.recipe;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to add recipe IDs.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
+
     // console.log("recipe recieved", recipe)
     const recipeId = req.body.recipe.recipe_id;
     //console.log("recipe received at backend addNewRecipe/byId endpoint", recipe);
@@ -176,6 +220,14 @@ router.post('/addNewRecipe', async (req, res) => {
 router.delete('/deleteRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
     const rmsDb = req.db.rms;
+    const user = req.user; // Access decoded token payload
+    if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
+        return res.status(401).json({
+            message: `Access denied. User : ${user ? user.username : 'Unknown'} Have Insufficient permissions to delete recipe ID.`,
+            username: user ? user.username : null,
+            auth_level: user ? user.auth_level : null
+        });
+    }
     try {
         if (recipeId) {
             const result = await deleteRecipeByID(recipeId, rmsDb);
