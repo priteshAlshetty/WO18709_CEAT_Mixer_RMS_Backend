@@ -39,11 +39,11 @@ app.get('/recipeFormat', (req, res) => {
 });
 // 👉 Swagger docs route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use(loggingMiddleware);
 app.use('/auth', authRoutes);
+app.use(loggingMiddleware);
 app.use(mixerDbMiddleware);
 app.use(verifyToken); // Apply auth middleware to all routes below
-app.use('/updateUsers', updateUsersRoutes);
+app.use('/auth', updateUsersRoutes);
 app.use('/recipe', recipeRoutes);
 app.use('/material', materialRoutes);
 app.use('/report', reportRoutes);

@@ -139,10 +139,10 @@ async function updateAuthLevel(params) {
     }
 }
 async function updateUsername(params) {
-    const { oldUsername, newUsername } = params;
+    const { username, newUsername } = params;
     try {
         const users = await getAllUsers();
-        const user = users.find(u => u.user_name === oldUsername);
+        const user = users.find(u => u.user_name === username);
         if (!user) {
             return ({ success: false, error: "User not found !!" });
         }
@@ -150,7 +150,7 @@ async function updateUsername(params) {
         if (existingUser) {
             return ({ success: false, error: "New username already exists !!" });
         }
-        const [result] = await db.query("UPDATE users SET user_name = ? WHERE user_name = ?", [newUsername, oldUsername]);
+        const [result] = await db.query("UPDATE users SET user_name = ? WHERE user_name = ?", [newUsername, username]);
         if (result.affectedRows === 0) {
             return ({ success: false, error: "User not found !!" });
         }
@@ -177,4 +177,4 @@ async function getAuthLevel(params) {
 
 
 
-module.exports = { login, signup, getAllUsers, deleteUser, updateUserPassword, updateAuthLevel, updateUsername };
+module.exports = { login, signup, getAllUsers, deleteUser, updateUserPassword, updateAuthLevel, updateUsername, getAuthLevel };

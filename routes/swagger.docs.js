@@ -3,29 +3,92 @@
  * tags:
  *   - name: Recipe
  *     description: APIs for managing recipes
+ *   - name: Weighing
+ *     description: APIs for material weighing reports
+ *   - name: Batch
+ *     description: APIs for batch reports
+ *   - name: Summary Report
+ *     description: APIs for summary reports
+ *   - name: Cleanout Reports
+ *     description: APIs for generating cleanout reports
+ *   - name: SHIFT PLAN REPORTS
+ *     description: APIs for generating shift plan execution reports
+ *   - name: Production Reports
+ *     description: APIs for generating production reports
+ *   - name: Material Manager
+ *     description: APIs for managing materials
+ *   - name: Downtime
+ *     description: APIs for fetching downtime records
+ *   - name: Authentication
+ *     description: APIs for authentication and user management
+ *   - name: User Management
+ *     description: APIs for user administration
+ *   - name: Alarms
+ *     description: Alarm report APIs
+ *   - name: Graph
+ *     description: Graph and trend APIs
+ *   - name: Recipe Status
+ *     description: Recipe activation status APIs
  */
+
 
 /**
  * @swagger
  * /recipe/allRecipeIds:
  *   get:
- *     summary: Get all Recipe IDs
- *     tags: [Recipe]
+ *     summary: Get all recipe IDs
+ *     description: Retrieves all available recipe IDs from the RMS system.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     responses:
  *       200:
- *         description: Successfully fetched recipe IDs
+ *         description: Recipe IDs fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 recipeIds:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - R001
+ *                     - R002
+ *                     - R003
  *       404:
- *         description: No Recipe IDs found
+ *         description: No recipe IDs found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /recipe/checkRecipeExists/byId:
  *   post:
- *     summary: Check if recipe exists by ID
- *     tags: [Recipe]
+ *     summary: Check recipe existence
+ *     description: Checks whether a recipe exists for the given recipe ID.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -41,20 +104,37 @@
  *     responses:
  *       200:
  *         description: Recipe exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 exists:
+ *                   type: boolean
+ *                   example: true
  *       404:
  *         description: Recipe not found
  *       400:
- *         description: Invalid or missing body
+ *         description: Invalid request body
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /recipe/viewRecipe/byId:
  *   post:
- *     summary: View recipe details by ID
- *     tags: [Recipe]
+ *     summary: View recipe details
+ *     description: Retrieves complete recipe details for a given recipe ID.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -69,21 +149,30 @@
  *                 example: R001
  *     responses:
  *       200:
- *         description: Recipe details
+ *         description: Recipe details fetched successfully
  *       404:
  *         description: Recipe not found
  *       400:
  *         description: Invalid recipe ID
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /recipe/editRecipe/byId:
  *   post:
- *     summary: Edit existing recipe by ID
- *     tags: [Recipe]
+ *     summary: Edit recipe
+ *     description: Updates an existing recipe using the supplied recipe object.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -103,16 +192,27 @@
  *         description: Recipe updated successfully
  *       400:
  *         description: Missing recipe object
+ *       404:
+ *         description: Recipe not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /recipe/addNewRecipe:
  *   post:
- *     summary: Add a new recipe
- *     tags: [Recipe]
+ *     summary: Add new recipe
+ *     description: Creates a new recipe in the RMS system.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -129,19 +229,28 @@
  *                   recipe_name: Rubber Mix B
  *     responses:
  *       200:
- *         description: Recipe added successfully
+ *         description: Recipe created successfully
  *       400:
- *         description: Recipe already exists or missing
+ *         description: Recipe already exists or invalid input
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /recipe/deleteRecipe/byId:
  *   delete:
- *     summary: Delete recipe by ID
- *     tags: [Recipe]
+ *     summary: Delete recipe
+ *     description: Deletes a recipe using recipe ID.
+ *     tags:
+ *       - Recipe
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -159,18 +268,27 @@
  *         description: Recipe deleted successfully
  *       400:
  *         description: Missing recipe ID
+ *       404:
+ *         description: Recipe not found
  *       500:
- *         description: Server error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /report/weighing/getExcelReport:
  *   post:
- *     summary: Generate and download Material Weighing Excel Report
- *     description: Generates an Excel report using material weighing data filtered by date range and returns it as a downloadable file.
- *     tags: [Weighing]
- *        
+ *     summary: Generate weighing Excel report
+ *     description: Generates and downloads an Excel report for material weighing data within a date range.
+ *     tags:
+ *       - Weighing
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -183,50 +301,42 @@
  *             properties:
  *               from:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-01"
- *                 description: Start date of the weighing report range
  *               to:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-30"
- *                 description: End date of the weighing report range
  *     responses:
  *       200:
- *         description: Excel Report generated successfully (file download)
+ *         description: Excel report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
  *       400:
- *         description: Missing required fields (from, to)
- *         content:
- *           application/json:
- *             example:
- *               message: "Missing 'from' or 'to' date"
+ *         description: Missing date range
  *       404:
- *         description: No weighing data found for selected date range
- *         content:
- *           application/json:
- *             example:
- *               message: "No material weighing data found for the selected date range"
+ *         description: No weighing data found
  *       500:
- *         description: Server error while generating or sending Excel report
- *         content:
- *           application/json:
- *             example:
- *               message: "Internal Server Error"
- *               error: "Error details here"
+ *         description: Internal server error
  */
-
-
 /**
  * @swagger
  * /report/batch/getBatchName/bydate:
  *   post:
- *     summary: Get batch names within a date range
- *     tags: [Batch]
+ *     summary: Get batch names
+ *     description: Retrieves batch names within the specified date range.
+ *     tags:
+ *       - Batch
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -239,38 +349,38 @@
  *             properties:
  *               from:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-07"
  *               to:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-07"
  *     responses:
  *       200:
- *         description: Successfully fetched batch names
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 BATCH_NAME:
- *                   type: array
- *                   items:
- *                     type: string
+ *         description: Batch names fetched successfully
  *       400:
- *         description: Missing required fields
+ *         description: Missing date parameters
  *       404:
  *         description: No batch names found
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /report/batch/getSerial/byBatchName:
  *   post:
- *     summary: Get serial numbers by batch names and date range
- *     tags: [Batch]
+ *     summary: Get serial numbers by batch name
+ *     description: Retrieves serial numbers for a given batch name within a date range.
+ *     tags:
+ *       - Batch
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -284,34 +394,24 @@
  *             properties:
  *               batchName:
  *                 type: string
- *                 description: batch Name or "All" for all batches
  *                 example: "MT671"
  *               from:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-07"
  *               to:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-08"
  *     responses:
  *       200:
  *         description: Serial numbers fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 SERIAL_NO:
- *                   type: array
- *                   items:
- *                     type: number
  *       400:
- *         description: Missing or invalid request fields
+ *         description: Invalid request
  *       404:
  *         description: No serial numbers found
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
  */
 
 /**
@@ -319,7 +419,16 @@
  * /report/batch/getbatchNo/bySerialNo:
  *   post:
  *     summary: Get batch numbers by serial number
- *     tags: [Batch]
+ *     description: Retrieves batch numbers associated with a serial number.
+ *     tags:
+ *       - Batch
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -330,34 +439,34 @@
  *               - serialNo
  *             properties:
  *               serialNo:
- *                 type: number
+ *                 type: integer
  *                 example: 1756
  *     responses:
  *       200:
  *         description: Batch numbers fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 BATCH_NO:
- *                   type: array
- *                   items:
- *                     type: number
  *       400:
- *         description: Missing required fields
+ *         description: Missing serial number
  *       404:
  *         description: No batch numbers found
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /report/batch/getExcelReport:
  *   post:
- *     summary: Generate Excel Batch Report for given parameters
- *     tags: [Batch]
+ *     summary: Generate batch Excel report
+ *     description: Generates batch report Excel file based on selected filters.
+ *     tags:
+ *       - Batch
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -373,51 +482,49 @@
  *             properties:
  *               recipeId:
  *                 type: string
- *                 description: batch Name or "All" for all recipe ids
  *                 example: "MT671"
  *               serialNo:
- *                 type: number
- *                 description: integer or "All" for all serial nos
+ *                 oneOf:
+ *                   - type: integer
+ *                   - type: string
  *                 example: 1756
  *               batchNo:
- *                 type: number
- *                 description: integer or "All" for all batch nos
+ *                 oneOf:
+ *                   - type: integer
+ *                   - type: string
  *                 example: "All"
  *               dttmFrom:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-07"
+ *                 example: "2025-11-07T00:00:00"
  *               dttmTo:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-07"
+ *                 example: "2025-11-07T23:59:59"
  *     responses:
  *       200:
- *         description: Excel Report generated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 reportPath:
- *                   type: string
- *                   example: "/reports/batch_report/BatchReport_1756_1.xlsx"
+ *         description: Batch report generated successfully
  *       400:
  *         description: Missing required fields
  *       500:
- *         description: Internal Server Error
+ *         description: Internal server error
  */
-
 
 /**
  * @swagger
  * /report/summary/getBatchName/byDateTime:
  *   post:
- *     summary: Get batch/recipe names between datetime range
+ *     summary: Get batch names for summary report
+ *     description: Retrieves batch names between selected datetime range.
  *     tags:
  *       - Summary Report
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -431,40 +538,37 @@
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01 00:00:00"
- *                 description: Start DateTime filter
+ *                 example: "2025-11-01T00:00:00"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-12-01 23:59:59"
- *                 description: End DateTime filter
+ *                 example: "2025-12-01T23:59:59"
  *     responses:
  *       200:
- *         description: Successfully fetched batch/recipe names
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 BATCH_NAME:
- *                   type: array
- *                   items:
- *                     type: string
- *                   example: ["CLEANOUT", "TBM01", "MIXING01"]
+ *         description: Batch names fetched successfully
  *       400:
- *         description: Missing date range values
+ *         description: Missing date range
  *       404:
- *         description: No batch names found for given period
+ *         description: No records found
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /report/summary/getSerial/byBatchName:
  *   post:
- *     summary: Get serial numbers for a batch within datetime range
+ *     summary: Get serial numbers for summary report
+ *     description: Retrieves serial numbers for a batch within selected datetime range.
  *     tags:
  *       - Summary Report
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -479,41 +583,38 @@
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01 00:00:00"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-12-01 23:59:59"
  *               batch_name:
  *                 type: string
  *                 example: "CLEANOUT"
  *     responses:
  *       200:
- *         description: Successfully fetched serial numbers
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 SERIAL_NO:
- *                   type: array
- *                   items:
- *                     type: integer
- *                   example: [2042, 2043, 2044, 2045]
+ *         description: Serial numbers fetched successfully
  *       400:
- *         description: Missing required fields
+ *         description: Invalid request
  *       404:
  *         description: No serial numbers found
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /report/summary/getExcelReport:
  *   post:
- *     summary: Generate summary Excel report and download file
+ *     summary: Generate summary Excel report
+ *     description: Generates downloadable summary report Excel file.
  *     tags:
  *       - Summary Report
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -529,20 +630,16 @@
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-11-01 00:00:00"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2025-12-01 23:59:59"
  *               batch_name:
  *                 type: string
- *                 example: "CLEANOUT"
  *               serial_no:
  *                 type: integer
- *                 example: 2042
  *     responses:
  *       200:
- *         description: Excel file download
+ *         description: Excel report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
@@ -554,21 +651,22 @@
  *         description: Internal server error
  */
 
-
-
 /**
  * @swagger
  * /cleanoutReport/byDate:
  *   post:
- *     summary: Generate Cleanout Report (Excel)
- *     description: |
- *       Generates a Cleanout Excel report for the given date range.  
- *       The report includes all CLEANOUT recipe material entries logged in `report_material_log`.  
- *       Returns the generated Excel file as a download.
- *
+ *     summary: Generate cleanout Excel report
+ *     description: Generates a downloadable Excel report containing cleanout recipe material entries for the selected date range.
  *     tags:
  *       - Cleanout Reports
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -581,56 +679,44 @@
  *             properties:
  *               from:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-18"
  *               to:
  *                 type: string
- *                 format: date-time
+ *                 format: date
  *                 example: "2025-11-19"
- *
  *     responses:
  *       200:
- *         description: Excel report successfully generated and downloaded.
+ *         description: Cleanout report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
- *
  *       400:
- *         description: Missing input fields
- *         content:
- *           application/json:
- *             example:
- *               message: "Missing 'from' or 'to' date"
- *
+ *         description: Missing date range
  *       404:
- *         description: No data found for the given date range
- *         content:
- *           application/json:
- *             example:
- *               message: "No CleanoutReport data found for the selected date range"
- *
+ *         description: No cleanout data found
  *       500:
- *         description: Internal server or file generation error
- *         content:
- *           application/json:
- *             example:
- *               message: "Internal Server Error"
- *               error: "Error details"
+ *         description: Internal server error
  */
+
 /**
  * @swagger
  * /shiftPlan/getExcelReport/complete:
  *   post:
- *     summary: Generate and download Shift Plan Execution Excel Report
+ *     summary: Generate shift plan execution report
+ *     description: Generates and downloads Excel report for shift plan execution data within selected date range.
  *     tags:
  *       - SHIFT PLAN REPORTS
- *     description: |
- *       Generates an Excel report of the shift plan execution for the given date range.
- *       The report includes Date, Time, Shift, Serial no, Recipe name, Set Batch, Finished Batch, and Username.
- *       Returns the Excel file if data exists; otherwise returns appropriate error messages.
- * 
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -645,74 +731,42 @@
  *                 type: string
  *                 format: date
  *                 example: "2025-11-19"
- *                 description: Start date for filtering (YYYY-MM-DD)
  *               to:
  *                 type: string
  *                 format: date
  *                 example: "2025-11-20"
- *                 description: End date for filtering (YYYY-MM-DD)
- * 
  *     responses:
  *       200:
- *         description: Excel report successfully generated and downloaded.
+ *         description: Shift plan report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
- * 
  *       400:
- *         description: Missing required date parameters.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Missing 'from' or 'to' date"
- * 
+ *         description: Missing date range
  *       404:
- *         description: No shift plan execution data found for selected date range.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "No Shift plan execution data found for the selected date range"
- * 
+ *         description: No shift plan data found
  *       500:
- *         description: Internal server error while generating or downloading report.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "ERR: Internal Server Error"
- *                 errLoc:
- *                   type: string
- *                   example: "At try catch block of route /shiftPlanReport/getExcelReport/complete"
- *                 error:
- *                   type: string
- *                   example: "Unexpected error occurred"
+ *         description: Internal server error
  */
 
 /**
  * @swagger
  * /report/production/getExcelReport/complete:
  *   post:
- *     summary: Generate and download the complete Production Excel Report
- *     description: >
- *       Generates a production report Excel file based on the provided date range.
- *       The system calculates cycle time and BWB time for each batch and returns an Excel file.
- *
+ *     summary: Generate production Excel report
+ *     description: Generates downloadable production Excel report for selected date range.
  *     tags:
  *       - Production Reports
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -727,50 +781,24 @@
  *                 type: string
  *                 format: date
  *                 example: "2025-11-20"
- *                 description: Start date (YYYY-MM-DD)
  *               to:
  *                 type: string
  *                 format: date
  *                 example: "2025-11-24"
- *                 description: End date (YYYY-MM-DD)
- *
  *     responses:
  *       200:
- *         description: Excel report generated successfully
+ *         description: Production report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
- *
  *       400:
- *         description: Missing date input
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "Missing 'from' or 'to' date"
- *
+ *         description: Missing date range
  *       404:
- *         description: No production data found for the given range
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "No production data found for the selected date range"
- *
+ *         description: No production data found
  *       500:
- *         description: Internal server error while generating or sending the report
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               example:
- *                 message: "ERR: Internal Server Error"
- *                 errLoc: "At try catch block of route /production/getExcelReport/complete"
- *                 error: "Error details"
+ *         description: Internal server error
  */
 
 /**
@@ -778,12 +806,20 @@
  * /material/getMaterials:
  *   get:
  *     summary: Get all materials
- *     description: Returns the complete list of materials stored in the database.
+ *     description: Retrieves all material records from the RMS database.
  *     tags:
  *       - Material Manager
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     responses:
  *       200:
- *         description: Successfully retrieved materials
+ *         description: Materials fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -793,10 +829,13 @@
  *                 properties:
  *                   material_code:
  *                     type: string
+ *                     example: CB01
  *                   material_name:
  *                     type: string
+ *                     example: Carbon Black
  *                   material_type:
  *                     type: string
+ *                     example: Raw Material
  *       500:
  *         description: Internal server error
  */
@@ -805,10 +844,17 @@
  * @swagger
  * /material/addMaterial:
  *   post:
- *     summary: Add a new material
- *     description: Creates a new material entry in the system.
+ *     summary: Add material
+ *     description: Adds a new material record into the RMS system.
  *     tags:
  *       - Material Manager
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -827,29 +873,37 @@
  *                 properties:
  *                   material_code:
  *                     type: string
- *                     example: "CB01"
+ *                     example: CB01
  *                   material_name:
  *                     type: string
- *                     example: "Carbon Black"
+ *                     example: Carbon Black
  *                   material_type:
  *                     type: string
- *                     example: "Raw Material"
+ *                     example: Raw Material
  *     responses:
  *       201:
  *         description: Material created successfully
  *       400:
- *         description: Missing required fields
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /material/deleteMaterial:
  *   delete:
- *     summary: Delete a material
- *     description: Deletes a material based on the provided material_code.
+ *     summary: Delete material
+ *     description: Deletes a material based on material code.
  *     tags:
  *       - Material Manager
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -866,22 +920,33 @@
  *                 properties:
  *                   material_code:
  *                     type: string
- *                     example: "CB01"
+ *                     example: CB01
  *     responses:
  *       200:
- *         description: Material deleted or not found
+ *         description: Material deleted successfully
  *       400:
- *         description: Missing material_code field
+ *         description: Missing material code
+ *       404:
+ *         description: Material not found
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /downtime/getDowntime/byDateTime:
  *   post:
- *     summary: Fetch downtime records between a given datetime range
+ *     summary: Fetch downtime records
+ *     description: Retrieves downtime records within selected datetime range.
  *     tags:
  *       - Downtime
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -896,60 +961,15 @@
  *                 type: string
  *                 format: date-time
  *                 example: "2025-02-09T00:00:00.000Z"
- *                 description: Start datetime (UTC or ISO format)
  *               to:
  *                 type: string
  *                 format: date-time
  *                 example: "2025-02-12T23:59:59.000Z"
- *                 description: End datetime (UTC or ISO format)
  *     responses:
  *       200:
- *         description: Downtime data returned successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 downtime_data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       sr:
- *                         type: integer
- *                         example: 1
- *                       DTTM:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-02-10 08:15:00"
- *                       shift:
- *                         type: string
- *                         example: "A"
- *                       downtime_start:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-02-10 08:15:00"
- *                       downtime_stop:
- *                         type: string
- *                         format: date-time
- *                         example: "2025-02-10 08:25:00"
- *                       error_code:
- *                         type: string
- *                         example: "E101"
- *                       category:
- *                         type: string
- *                         example: "Mechanical"
- *                       sub_category:
- *                         type: string
- *                         example: "Gearbox"
- *                       current_login:
- *                         type: string
- *                         example: "operator01"
- *                       description:
- *                         type: string
- *                         example: "Gearbox overheating"
+ *         description: Downtime data fetched successfully
  *       400:
- *         description: Missing required parameters (from, to)
+ *         description: Missing datetime range
  *       500:
  *         description: Internal server error
  */
@@ -958,9 +978,17 @@
  * @swagger
  * /downtime/updateDowntime:
  *   post:
- *     summary: Update downtime records in bulk
+ *     summary: Update downtime records
+ *     description: Updates one or more downtime records in bulk.
  *     tags:
  *       - Downtime
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -972,81 +1000,32 @@
  *             properties:
  *               downtime_data:
  *                 type: array
- *                 description: Array of downtime objects to update
  *                 items:
  *                   type: object
- *                   required:
- *                     - sr
- *                     - DTTM
- *                     - shift
- *                     - downtime_start
- *                     - downtime_stop
- *                     - error_code
- *                     - category
- *                     - sub_category
- *                     - current_login
- *                     - description
- *                   properties:
- *                     sr:
- *                       type: integer
- *                       example: 1
- *                       description: Primary key of downtime record (used for update)
- *                     DTTM:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-02-10 08:15:00"
- *                     shift:
- *                       type: string
- *                       example: "A"
- *                     downtime_start:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-02-10 08:15:00"
- *                     downtime_stop:
- *                       type: string
- *                       format: date-time
- *                       example: "2025-02-10 08:25:00"
- *                     error_code:
- *                       type: string
- *                       example: "E101"
- *                     category:
- *                       type: string
- *                       example: "Mechanical"
- *                     sub_category:
- *                       type: string
- *                       example: "Gearbox"
- *                     current_login:
- *                       type: string
- *                       example: "operator01"
- *                     description:
- *                       type: string
- *                       example: "Gearbox overheating"
  *     responses:
  *       200:
- *         description: Downtime records updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                   example: true
- *                 affectedRows:
- *                   type: integer
- *                   example: 1
+ *         description: Downtime updated successfully
  *       400:
- *         description: Missing or invalid downtime_data
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /downtime/deleteDowntime:
  *   post:
- *     summary: Delete a downtime record by SR number
+ *     summary: Delete downtime record
+ *     description: Deletes a downtime record using SR number.
  *     tags:
  *       - Downtime
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1059,37 +1038,32 @@
  *               sr:
  *                 type: integer
  *                 example: 1
- *                 description: SR identifier of the downtime record to delete
  *     responses:
  *       200:
  *         description: Downtime deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                   example: true
- *                 result:
- *                   type: object
- *                   example:
- *                     affectedRows: 1
- *                     warningCount: 0
  *       400:
- *         description: Missing or invalid SR value
+ *         description: Missing SR number
  *       404:
- *         description: No record found to delete
+ *         description: Record not found
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /downtime/addDowntime:
  *   post:
- *     summary: Add a new downtime entry
+ *     summary: Add downtime record
+ *     description: Creates a new downtime record.
  *     tags:
  *       - Downtime
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1103,56 +1077,30 @@
  *               - category
  *               - sub_category
  *               - description
- *             properties:
- *               downtime_start:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-02-10 08:15:00"
- *               downtime_stop:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-02-10 08:25:00"
- *               error_code:
- *                 type: string
- *                 example: "E101"
- *               category:
- *                 type: string
- *                 example: "Mechanical"
- *               sub_category:
- *                 type: string
- *                 example: "Gearbox"
- *               description:
- *                 type: string
- *                 example: "Gearbox overheating"
  *     responses:
  *       200:
  *         description: Downtime record added successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                   example: true
- *                 result:
- *                   type: object
- *                   example:
- *                     insertId: 15
- *                     affectedRows: 1
- *                     warningCount: 0
  *       400:
- *         description: Missing required fields
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /downtime/generateReport:
  *   post:
- *     summary: Generate an Excel report for downtime within a datetime range
+ *     summary: Generate downtime report
+ *     description: Generates downloadable Excel report for downtime records.
  *     tags:
  *       - Downtime
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1162,37 +1110,36 @@
  *             required:
  *               - from
  *               - to
- *             properties:
- *               from:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-02-10T00:00:00Z"
- *               to:
- *                 type: string
- *                 format: date-time
- *                 example: "2025-02-12T23:59:59Z"
  *     responses:
  *       200:
- *         description: Excel report generated successfully
+ *         description: Report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
  *       400:
- *         description: Missing required date range
+ *         description: Missing date range
  *       500:
  *         description: Internal server error
  */
-
 
 /**
  * @swagger
  * /report/alarm/generateReport:
  *   post:
- *     summary: Generate an Excel report for alarms within a datetime range
+ *     summary: Generate alarm report
+ *     description: Generates downloadable Excel report for alarm records within selected datetime range.
  *     tags:
  *       - Alarms
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -1213,14 +1160,14 @@
  *                 example: "2025-02-12T23:59:59Z"
  *     responses:
  *       200:
- *         description: Excel report generated successfully
+ *         description: Alarm report generated successfully
  *         content:
  *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
  *             schema:
  *               type: string
  *               format: binary
  *       400:
- *         description: Missing required date range
+ *         description: Missing datetime range
  *       500:
  *         description: Internal server error
  */
@@ -1229,15 +1176,17 @@
  * @swagger
  * /graph/getRecipeIdByDate:
  *   post:
- *     summary: Get recipe IDs available within a date range
- *     description: |
- *       Returns a list of distinct recipe IDs logged between the given
- *       date-time range.  
- *       The request is considered valid even if no data is found.
- *
+ *     summary: Get recipe IDs by date range
+ *     description: Retrieves distinct recipe IDs within selected datetime range.
  *     tags:
  *       - Graph
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1252,80 +1201,34 @@
  *                 type: string
  *                 format: date-time
  *                 example: "2026-01-01T02:30:10.000Z"
- *                 description: Start date-time UTC 
  *               to:
  *                 type: string
  *                 format: date-time
  *                 example: "2026-01-02T02:30:10.000Z"
- *                 description: End date-time UTC 
- *
  *     responses:
  *       200:
- *         description: Valid request processed successfully
- *         content:
- *           application/json:
- *             schema:
- *               oneOf:
- *                 - type: object
- *                   properties:
- *                     status:
- *                       type: boolean
- *                       example: true
- *                     data:
- *                       type: array
- *                       items:
- *                         type: string
- *                       example: ["MT0112", "MT0113"]
- *                 - type: object
- *                   properties:
- *                     status:
- *                       type: boolean
- *                       example: false
- *                     error:
- *                       type: string
- *                       example: "NO_DATA"
- *
+ *         description: Recipe IDs fetched successfully
  *       400:
- *         description: Missing required request parameters
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: "FROM_AND_TO_REQUIRED"
- *
+ *         description: Missing required fields
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                   example: false
- *                 error:
- *                   type: string
- *                   example: "INTERNAL_SERVER_ERROR"
  */
 
 /**
  * @swagger
  * /graph/getSrNoByRecipeId:
  *   post:
- *     summary: Get SR numbers for a recipe within a date range
- *     description: |
- *       Returns all serial numbers (sr_no) associated with a given recipe ID
- *       within the specified date range.
- *
+ *     summary: Get serial numbers by recipe ID
+ *     description: Retrieves serial numbers for a selected recipe within date range.
  *     tags:
  *       - Graph
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1340,46 +1243,17 @@
  *               from:
  *                 type: string
  *                 format: date-time
- *                 example: "2026-01-01T02:30:10.000Z"
  *               to:
  *                 type: string
  *                 format: date-time
- *                 example: "2026-01-02T02:30:10.000Z"
  *               recipe_id:
  *                 type: string
  *                 example: "MT0112"
- *
  *     responses:
  *       200:
- *         description: Valid request processed
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 result:
- *                   oneOf:
- *                     - type: object
- *                       properties:
- *                         status:
- *                           type: boolean
- *                           example: true
- *                         data:
- *                           type: array
- *                           items:
- *                             type: integer
- *                           example: [1558, 1559]
- *                     - type: object
- *                       properties:
- *                         status:
- *                           type: boolean
- *                           example: false
- *                         error:
- *                           type: string
- *                           example: "NO_DATA"
- *
+ *         description: Serial numbers fetched successfully
  *       400:
- *         description: Missing required request parameters
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
@@ -1388,14 +1262,17 @@
  * @swagger
  * /graph/getBatchCountBySrno:
  *   post:
- *     summary: Get batch count for a given SR number
- *     description: |
- *       Returns the total number of batches recorded for a given
- *       recipe ID and serial number within the specified date range.
- *
+ *     summary: Get batch count
+ *     description: Retrieves total batch count for selected recipe and serial number.
  *     tags:
  *       - Graph
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1407,40 +1284,11 @@
  *               - to
  *               - recipe_id
  *               - sr_no
- *             properties:
- *               from:
- *                 type: string
- *                 format: date-time
- *               to:
- *                 type: string
- *                 format: date-time
- *               recipe_id:
- *                 type: string
- *                 example: "MT0112"
- *               sr_no:
- *                 type: integer
- *                 example: 1558
- *
  *     responses:
  *       200:
- *         description: Batch count retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 result:
- *                   type: object
- *                   properties:
- *                     status:
- *                       type: boolean
- *                       example: true
- *                     batch_count:
- *                       type: integer
- *                       example: 7
- *
+ *         description: Batch count fetched successfully
  *       400:
- *         description: Missing required parameters
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
@@ -1449,14 +1297,17 @@
  * @swagger
  * /graph/getGraphDataByBatchNo:
  *   post:
- *     summary: Get graph data for a specific batch
- *     description: |
- *       Returns time-series graph data (temperature, power, energy, pressure,
- *       RPM, ram position, digital flags) for a given batch number.
- *
+ *     summary: Get graph data
+ *     description: Retrieves graph trend data for selected batch.
  *     tags:
  *       - Graph
- *
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
  *     requestBody:
  *       required: true
  *       content:
@@ -1469,89 +1320,21 @@
  *               - recipe_id
  *               - sr_no
  *               - batch_no
- *             properties:
- *               from:
- *                 type: string
- *                 format: date-time
- *               to:
- *                 type: string
- *                 format: date-time
- *               recipe_id:
- *                 type: string
- *                 example: "MT0112"
- *               sr_no:
- *                 type: integer
- *                 example: 1558
- *               batch_no:
- *                 type: integer
- *                 example: 3
- *
  *     responses:
  *       200:
- *         description: Graph data retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 result:
- *                   type: object
- *                   properties:
- *                     status:
- *                       type: boolean
- *                       example: true
- *                     meta:
- *                       type: object
- *                       properties:
- *                         begin_time:
- *                           type: string
- *                           example: "2026-01-01T02:30:10.000Z"
- *                         end_time:
- *                           type: string
- *                           example: "2026-01-02T02:30:10.000Z"
- *                     graphData:
- *                       type: object
- *                       properties:
- *                         temp:
- *                           type: array
- *                           items:
- *                             type: number
- *                         power:
- *                           type: array
- *                           items:
- *                             type: number
- *                         energy:
- *                           type: array
- *                           items:
- *                             type: number
- *                         pressure:
- *                           type: array
- *                           items:
- *                             type: number
- *                         rpm:
- *                           type: array
- *                           items:
- *                             type: number
- *                         ram_position:
- *                           type: array
- *                           items:
- *                             type: number
- *                         DD_Open:
- *                           type: array
- *                           items:
- *                             type: integer
- *
+ *         description: Graph data fetched successfully
  *       400:
- *         description: Missing required parameters
+ *         description: Invalid request
  *       500:
  *         description: Internal server error
  */
+
 /**
  * @swagger
  * /recipeStatus/getAllRecipeStatus:
  *   get:
  *     summary: Get all recipe statuses
- *     description: Fetches all recipe status records from the RMS database.
+ *     description: Retrieves recipe activation status records.
  *     tags:
  *       - Recipe Status
  *     parameters:
@@ -1561,47 +1344,19 @@
  *         schema:
  *           type: string
  *           example: Mixer1
- *         description: Mixer identifier
  *     responses:
  *       200:
  *         description: Recipe statuses fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 errLocation:
- *                   type: string
- *                   example: GET /getAllRecipeStatus route handler.
- *                 error:
- *                   type: string
- *                   example: Database connection failed
  */
-
 
 /**
  * @swagger
  * /recipeStatus/updateRecipeStatus:
  *   post:
- *     summary: Update recipe activation status
- *     description: Updates the activation status of a recipe using recipe ID.
+ *     summary: Update recipe status
+ *     description: Updates activation status for a recipe.
  *     tags:
  *       - Recipe Status
  *     parameters:
@@ -1611,7 +1366,6 @@
  *         schema:
  *           type: string
  *           example: Mixer1
- *         description: Mixer identifier
  *     requestBody:
  *       required: true
  *       content:
@@ -1632,51 +1386,383 @@
  *               IsActivate:
  *                 type: integer
  *                 example: 0
- *           example:
- *             recipe_id: TRIAL004
- *             recipe_name: "001"
- *             IsActivate: 0
  *     responses:
  *       200:
  *         description: Recipe status updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Recipe status updated successfully
  *       400:
  *         description: Missing required fields
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Missing required fields
  *       500:
  *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticates a user with username and password and returns login result.
+ *     tags:
+ *       - Authentication
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *         description: Mixer identifier
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: admin
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: admin123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid username or password
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/signup:
+ *   post:
+ *     summary: Create a new user
+ *     description: Creates a new user account. Only admin users can access this endpoint.
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - auth_level
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: operator1
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: SecurePass123
+ *               auth_level:
+ *                 type: string
+ *                 enum: [admin, supervisor, operator]
+ *                 example: operator
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *       401:
+ *         description: Unauthorized
  *         content:
  *           application/json:
  *             schema:
- *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 errLocation:
+ *                 message:
  *                   type: string
- *                   example: POST /updateRecipeStatus route handler.
- *                 error:
+ *                   example: "Access denied. User : john Have Insufficient permissions to add new users."
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /auth/getAllUsers:
+ *   get:
+ *     summary: Get all users
+ *     description: Retrieves a list of all users. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all users
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
  *                   type: string
- *                   example: Database update failed
+ *                   example: "Access denied. User : operator1 Have Insufficient permissions to view all users."
+ *                 username:
+ *                   type: string
+ *                 auth_level:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/deleteUser:
+ *   delete:
+ *     summary: Delete a user
+ *     description: Deletes a user account by username. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: operator1
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. User : supervisor1 Have Insufficient permissions to delete users."
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/updatePassword:
+ *   post:
+ *     summary: Update user password
+ *     description: Updates a user's password. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: operator1
+ *               oldPassword:
+ *                 type: string
+ *                 format: password
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Invalid password
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. User : operator1 Have Insufficient permissions to update password."
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/updateAuthLevel:
+ *   post:
+ *     summary: Update user authorization level
+ *     description: Updates user auth level. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - auth_level
+ *             properties:
+ *               username:
+ *                 type: string
+ *               auth_level:
+ *                 type: string
+ *                 enum: [admin, supervisor, operator]
+ *     responses:
+ *       200:
+ *         description: Auth level updated
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. User : operator1 Have Insufficient permissions to update auth level."
+ *       500:
+ *         description: Internal server error
+ */
+/**
+ * @swagger
+ * /auth/updateUsername:
+ *   post:
+ *     summary: Update username
+ *     description: Updates an existing user's username. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - newUsername
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: operator1
+ *               newUsername:
+ *                 type: string
+ *                 example: operator2
+ *     responses:
+ *       200:
+ *         description: Username updated successfully
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. User : supervisor1 Have Insufficient permissions to update username."
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /auth/auth-level:
+ *   get:
+ *     summary: Get user authorization level
+ *     description: Retrieves the authorization level of a specified user. Only admin users can access this endpoint.
+ *     tags:
+ *       - User Management
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-mixer-id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: Mixer1
+ *       - in: query
+ *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: operator1
+ *         description: Username whose authorization level needs to be fetched
+ *     responses:
+ *       200:
+ *         description: Authorization level fetched successfully
+ *       400:
+ *         description: Missing username parameter
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. User : supervisor1 Have Insufficient permissions to fetch auth level."
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
  */
