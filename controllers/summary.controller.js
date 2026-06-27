@@ -60,7 +60,7 @@ async function getMatrialByBatchNo(params, db) {
         const [rows] = await db.query(
             `
             SELECT material_code, material_type,act_wt
-            FROM report_material_log
+            FROM report_material_log_view
             WHERE batch_no = ? AND recipe_id = ? AND serial_no = ? 
             ORDER BY DTTM ASC; `, [params.batch_no, params.recipe_id, params.serial_no]);
 
@@ -106,10 +106,17 @@ async function getMatrialByBatchNo(params, db) {
 
 async function getSummaryData(params, db) {
     try {
-        const queryObj = await getBatchReportQueryObj(params, db);
-        // console.log("Query Object:", queryObj);
-        // this is missing now
 
+        // create query params
+        let queryParams = {
+            dttmFrom: params.dttmFrom,
+            dttmTo: params.dttmTo,
+            recipeId: params.batch_name || 'all',
+            serialNo: params.serial_no || 'all',
+            batchNo: params.batchNo || "all"
+        }
+
+        const queryObj = await getBatchReportQueryObj(queryParams, db);
         const summary_data = [];
 
         for (const row of queryObj) {
@@ -338,7 +345,7 @@ async function generateSummaryExcelReport(params, db) {
         if (!fs.existsSync(reportsDir)) {
             fs.mkdirSync(reportsDir, { recursive: true });
         }
-        const filePath = path.join(reportsDir, `Production_Report_${new Date().toISOString().split("T")[0]}.xlsx`);
+        const filePath = path.join(reportsDir, `summary_Report_${new Date().toISOString().split("T")[0]}.xlsx`);
         await workbook.xlsx.writeFile(filePath);
         return { status: true, filePath };
 

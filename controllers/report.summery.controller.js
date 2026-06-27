@@ -20,7 +20,7 @@ async function getMaterialData(params, db) {
         const [rows] = await db.query(/* sql */
             `
             SELECT material_code,  act_wt, material_type
-            FROM report_material_log
+            FROM report_material_log_view
             WHERE recipe_id = ? AND serial_no = ? AND batch_no = ? 
             ORDER BY material_type;
             `,

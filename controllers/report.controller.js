@@ -330,7 +330,7 @@ async function getWeighingDetails(params, db) {
     const [batch_details] = await db.query(
         /* sql */`SELECT  
         material_type,material_code,  set_wt, act_wt 
-        FROM report_material_log
+        FROM report_material_log_view
         WHERE batch_no = ?  AND serial_no = ? AND recipe_id = ?;`
         , [params.batch_no, params.serial_no, params.recipe_id]);
 
@@ -419,7 +419,7 @@ async function generateExcelMaterialReport(params, db) {
                 material_type,
                 material_code,
                 ROUND(SUM(act_wt),3) AS total_act_wt
-            FROM report_material_log
+            FROM report_material_log_view
             WHERE DTTM BETWEEN ? AND ?
             GROUP BY material_type, material_code
             ORDER BY material_type;`,
