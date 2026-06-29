@@ -311,6 +311,7 @@ async function getBatchDetails(params, db) {
     const [batch_details] = await db.query(
         /* sql */`SELECT 
         TIME(DTTM) AS time_only,
+        DATE_FORMAT(DTTM , '%Y-%m-%d') as date_only,
         report_batch_details.*
         FROM 
         report_batch_details

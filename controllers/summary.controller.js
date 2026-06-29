@@ -237,8 +237,8 @@ async function generateSummaryExcelReport(params, db) {
         summaryData.forEach(data => {
             const dttmString = data.DTTM ? new Date(data.DTTM).toISOString().replace("T", " ").slice(0, 19) : "";
             sheet.addRow({
-                date: dttmString ? dttmString.split(" ")[0] : "",
-                time: dttmString ? dttmString.split(" ")[1] : "",
+                date: data.date_only || dttmString ? dttmString.split(" ")[0] : "",
+                time: data.time_only || dttmString ? dttmString.split(" ")[1] : "",
                 recipe_id: data.recipe_id || "",
                 serial_no: data.serial_no || "",
                 batch_no: data.batch_no || "",
