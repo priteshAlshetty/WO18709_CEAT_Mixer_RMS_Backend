@@ -10,6 +10,7 @@ const {
     getSerialByBatchFromSummary,
 } = require('../controllers/summary.controller.js');
 const { getAlarmReport } = require('../controllers/alarmReport.controller.js');
+const { getLogs } = require('../controllers/operatorLog.controller.js');
 const router = express.Router();
 const fs = require("fs");
 const path = require("path");
@@ -527,4 +528,64 @@ router.post('/alarm/generateReport', async (req, res) => {
     }
 });
 
+// ---operator log report
+
+router.post('/operatorLog/generateReport', async (req, res) => {
+    try {
+        const { from, to } = req.body;
+
+        // Validate params
+        if (!from || !to) {
+            return res.status(400).json({
+                message: "Missing required parameters 'from' or 'to'."
+            });
+        }
+
+        // Call service
+        const result = await getLogs({ from, to }, req.db.report);
+
+        if (!result.status) {
+            // Handle service failure
+            return res.status(500).json({
+                message: "Failed to generate operator log report",
+                details: result.message || null
+            });
+        }
+
+        const reportPath = result.filePath;
+
+        // Check if file exists
+        if (!fs.existsSync(reportPath)) {
+            console.error("❌ Report file does not exist:", reportPath);
+            return res.status(500).json({
+                message: "Generated report file not found"
+            });
+        }
+
+        // Send file
+        const downloadName = `operator_logs_${req.mixerId}.xlsx`;
+
+        return res.download(reportPath, downloadName, (err) => {
+            if (err) {
+                console.error("❌ Error sending file:", err);
+
+                // Cannot send new headers if response already started
+                if (!res.headersSent) {
+                    return res.status(500).json({
+                        message: "Error sending file",
+                        error: err.message
+                    });
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("🔥 Fatal Error in /alarmReport:", error);
+        return res.status(500).json({
+            message: "ERR: Internal Server Error",
+            errLoc: "At try-catch block of route /alarmReport",
+            error: error.message
+        });
+    }
+});
 module.exports = router;

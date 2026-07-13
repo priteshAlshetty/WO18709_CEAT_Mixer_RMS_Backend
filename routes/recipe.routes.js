@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const recipetest = require('../recipe_response.json')
-
+const { logAction } = require('../controllers/operatorLog.controller.js');
 
 const { insertRecipe,
     deleteRecipeByID,
@@ -131,6 +131,7 @@ router.post('/editRecipe/byId', async (req, res) => {
     // Use nullish coalescing to assign null if req.body.recipe doesn't exist
     const recipe = req.body?.recipe ?? null;
     const rmsDb = req.db.rms;
+    const reportDB = req.db.report;
 
     const user = req.user; // Access decoded token payload
     if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
@@ -146,6 +147,16 @@ router.post('/editRecipe/byId', async (req, res) => {
     try {
         if (recipe) {
             const result = await insertRecipe(recipe, false, rmsDb);
+            logAction({
+                action: 'edit Recipe : ' + recipe.recipe_id,
+                operator_name: user.username,
+                operator_authorization: user.auth_level,
+                Description: {
+                    recipe_id: recipe.recipe_id,
+                    recipe,
+                    message: 'Recipe edited successfully'
+                }
+            }, reportDB);
             res.status(200).json({
                 message: 'Recipe updated successfully', data: result
             });
@@ -178,6 +189,7 @@ router.post('/addNewRecipe', async (req, res) => {
     }
     const recipe = req.body.recipe;
     const rmsDb = req.db.rms;
+    const reportDB = req.db.report;
     const user = req.user; // Access decoded token payload
     if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
         return res.status(401).json({
@@ -202,6 +214,16 @@ router.post('/addNewRecipe', async (req, res) => {
                 });
             }
             const result = await insertRecipe(recipe, true, rmsDb);
+            logAction({
+                action: 'add new Recipe : ' + recipe.recipe_id,
+                operator_name: user.username,
+                operator_authorization: user.auth_level,
+                Description: {
+                    recipe_id: recipe.recipe_id,
+                    recipe,
+                    message: 'Recipe added successfully'
+                }
+            }, reportDB);
             res.status(200).json({ message: 'Recipe  Added successfully', data: result });
         } else {
             res.status(400).json({ message: 'recipe missing' });
@@ -220,6 +242,8 @@ router.post('/addNewRecipe', async (req, res) => {
 router.delete('/deleteRecipe/byId', async (req, res) => {
     const recipeId = req.body.recipe_id;
     const rmsDb = req.db.rms;
+    const reportDB = req.db.report;
+
     const user = req.user; // Access decoded token payload
     if (!user || !user.auth_level || !["admin", "supervisor"].includes(user.auth_level)) {
         return res.status(401).json({
@@ -231,12 +255,22 @@ router.delete('/deleteRecipe/byId', async (req, res) => {
     try {
         if (recipeId) {
             const result = await deleteRecipeByID(recipeId, rmsDb);
-            res.status(200).json({ message: 'Recipe deleted successfully', data: result });
+            logAction({
+                action: 'delete Recipe : ' + recipeId,
+                operator_name: user.username,
+                operator_authorization: user.auth_level,
+                Description: {
+                    recipe_id: recipeId,
+                    message: 'Recipe deleted successfully'
+                }
+            }, reportDB);
+            res.status(200).json({ message: result.message || "", data: result });
         } else {
             res.status(400).json({ message: 'recipe_id missing' });
         }
 
     } catch (error) {
+        console.error("Error deleting recipe:", error);
         res.status(500).json({
             message: 'Error deleting recipe',
             error: error.message,

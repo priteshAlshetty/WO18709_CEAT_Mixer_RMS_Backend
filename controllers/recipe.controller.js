@@ -316,7 +316,7 @@ async function deleteRecipeByID(recipeId, db) {
         });
 
         await conn.commit(); // Move commit before return
-        await recipeHistory(recipeId, 'DELETED', {});
+        await recipeHistory(recipeId, 'DELETED', {}, db);
         if (totalDeleted > 0) {
             return {
                 success: true,
@@ -690,6 +690,7 @@ async function insertRecipe(recipe_json, newInsert = false, db) {
     } catch (error) {
         await conn.rollback();
         console.error("Error updating recipe:", error);
+        throw error; // Rethrow the error to be handled by the caller
         return {
             success: false,
             message: "Database error occurred while updating recipe",

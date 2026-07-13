@@ -8,7 +8,7 @@ const SECRET_KEY = process.env.JWT_SECRET;
 function verifyToken(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
-
+        console.log("Authorization Header:", authHeader);
         // Expect: Authorization: Bearer <token>
         if (!authHeader) {
             return res.status(401).json({
