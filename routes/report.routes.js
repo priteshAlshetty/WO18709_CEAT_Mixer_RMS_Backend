@@ -563,7 +563,7 @@ router.post('/operatorLog/generateReport', async (req, res) => {
         }
 
         // Send file
-        const downloadName = `operator_logs_${req.mixerId}.xlsx`;
+        const downloadName = `operator_logs_${req.mixerId}.csv`;
 
         return res.download(reportPath, downloadName, (err) => {
             if (err) {
